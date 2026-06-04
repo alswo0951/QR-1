@@ -88,20 +88,43 @@ cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
                 </button>
             </div>
 
-            <!-- 동기화 다운로드 -->
-            <div class="bg-amber-500 text-white p-4 rounded-2xl shadow-md border border-amber-400 space-y-2.5">
-                <div class="flex items-center gap-2 text-xs font-black">
-                    <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
-                    <span>현장 모바일 QR 배포용 파일 저장소</span>
-                </div>
-                <p class="text-[10px] text-amber-50 leading-relaxed font-bold">
-                    현재 기기에서 제품을 추가하거나 수정한 정보는 다른 폰(QR스캔)에 바로 보이지 않습니다. 아래 버튼을 눌러 새 <strong>index.html</strong>을 다운로드하고, GitHub에 그대로 업로드하시면 스마트폰에서도 완벽히 동기화됩니다!
-                </p>
-                <button onclick="downloadUpdatedHtml()" class="w-full bg-white text-amber-800 hover:bg-amber-50 text-xs font-black py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-sm">
-                    <i class="fa-solid fa-file-arrow-down"></i>
-                    <span>💾 수정한 내용 포함하여 index.html 다운로드</span>
-                </button>
-            </div>
+function downloadUpdatedHtml() {
+    // 1. 현재 메모리에 있는 최신 데이터(알맹이)를 가져옵니다.
+    const currentData = JSON.stringify(productsDb, null, 6);
+    
+    // 2. 현재 페이지의 전체 HTML 소스코드를 가져옵니다.
+    let htmlContent = document.documentElement.outerHTML;
+    
+    // 3. 소스코드 내의 기존 데이터를 찾아서 현재 데이터로 치환합니다.
+    // initialProductsDb 변수 부분을 정규식으로 찾아 데이터를 갈아끼웁니다.
+    const dataRegex = /(\/\* DATA_PLACEHOLDER_START \*\/[\s\S]*?const initialProductsDb = )([\s\S]*?)(;[\s\S]*?\/\* DATA_PLACEHOLDER_END \*\/)/;
+    
+    if (dataRegex.test(htmlContent)) {
+        htmlContent = htmlContent.replace(dataRegex, `$1${currentData}$3`);
+    } else {
+        // 만약 마커가 없다면 단순히 변수명으로 찾아서 바꿉니다.
+        const simpleRegex = /(const initialProductsDb = )([\s\S]*?)(;)/;
+        htmlContent = htmlContent.replace(simpleRegex, `$1${currentData}$3`);
+    }
+
+    // 4. 새 파일로 만들기 위해 Blob 객체를 생성합니다.
+    const blob = new Blob(["<!DOCTYPE html>\n" + htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    
+    // 5. 가상의 링크를 만들어 다운로드를 실행합니다.
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'index.html'; // 저장될 파일 이름
+    document.body.appendChild(a);
+    a.click();
+    
+    // 6. 사용한 URL 객체 해제
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        showToast("✅ 데이터가 포함된 새 파일이 다운로드되었습니다!");
+    }, 0);
+}
 
             <!-- 검색창 + 그룹 편집 버튼 -->
             <div class="flex gap-2">
