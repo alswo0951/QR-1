@@ -1,17 +1,15 @@
+bash
+
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>꿈비 GGUMBI 스마트 QR 자가관리 매뉴얼 센터</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Noto Sans KR -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons for Industrial UI -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Tailwind Custom Brand Theme Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -21,14 +19,14 @@
                             50: '#f2fafb',
                             100: '#def1f3',
                             200: '#bce4e8',
-                            300: '#9ad3d6', // 꿈비 스토어 고유 파스텔 민트색 (바탕색)
-                            400: '#7cbcc0', 
-                            500: '#5e9fa4', 
+                            300: '#9ad3d6',
+                            400: '#7cbcc0',
+                            500: '#5e9fa4',
                             600: '#4b8286',
                             700: '#3e6b6f',
                             800: '#34575b',
-                            900: '#223d40', 
-                            950: '#9ad3d6', 
+                            900: '#223d40',
+                            950: '#9ad3d6',
                         }
                     }
                 }
@@ -36,44 +34,25 @@
         }
     </script>
     <style>
-        body {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-            background-color: #9ad3d6; 
-        }
+        body { font-family: 'Inter', 'Noto Sans KR', sans-serif; background-color: #9ad3d6; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #9ad3d6; }
         ::-webkit-scrollbar-thumb { background: #5e9fa4; border-radius: 999px; }
         .ggumbi-shadow { box-shadow: 0 10px 30px -10px rgba(34, 61, 64, 0.15); }
-        
-        /* 카테고리 색상 */
-        .category-tpu { background-color: #fef3c7; border-left: 4px solid #f59e0b; }
-        .category-babyroom { background-color: #dbeafe; border-left: 4px solid #3b82f6; }
-        .category-uncategorized { background-color: #f3f4f6; border-left: 4px solid #9ca3af; }
-        
-        /* 텍스트 색상 선택 버튼 */
-        .color-picker-btn {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            border: 2px solid #e5e7eb;
-            transition: all 0.2s;
-        }
-        .color-picker-btn:hover {
-            transform: scale(1.1);
-            border-color: #999;
-        }
-        .color-picker-btn.active {
-            border-color: #000;
-            box-shadow: 0 0 8px rgba(0,0,0,0.3);
-        }
+        /* 색상 피커 스왓치 */
+        .color-swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.15); transition: transform 0.1s; }
+        .color-swatch:hover { transform: scale(1.2); }
+        .color-swatch.selected { outline: 3px solid #223d40; outline-offset: 1px; }
+        /* 그룹 접기/펼치기 */
+        .group-header { cursor: pointer; }
+        .group-content { transition: all 0.2s; }
+        /* 체크박스 편집모드 */
+        .edit-checkbox { width: 18px; height: 18px; accent-color: #5e9fa4; cursor: pointer; }
     </style>
 </head>
 <body class="text-brand-900 min-h-screen flex flex-col antialiased">
 
-    <!-- -->
-    <!-- 꿈비 스토어 통합 네비게이션 헤더 -->
+    <!-- 헤더 -->
     <header class="bg-white/90 border-b border-brand-200/60 sticky top-0 z-40 backdrop-blur-md shadow-sm">
         <div class="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-2.5">
@@ -92,11 +71,9 @@
         </div>
     </header>
 
-    <!-- 메인 컨텐츠 영역 -->
     <main class="flex-grow max-w-md w-full mx-auto px-4 py-5 flex flex-col justify-start">
-        
-        <!-- -->
-        <!-- [VIEW 1: 메인 제품 목록 로비] -->
+
+        <!-- ===== VIEW 1: 메인 로비 ===== -->
         <section id="view-lobby" class="space-y-5">
             <div class="bg-white/85 backdrop-blur rounded-2xl p-5 ggumbi-shadow border border-white/60 flex items-center justify-between">
                 <div class="space-y-1 pr-2">
@@ -105,51 +82,13 @@
                     </h2>
                     <p class="text-[11px] text-brand-800 leading-relaxed font-medium">실시간 QR 스캔을 통해 최적의 공박스 규격 및 동적 가이드를 확인하세요.</p>
                 </div>
-                <!-- 제품 추가 모달 호출 버튼 -->
                 <button onclick="openAdminEditorModal(false)" class="shrink-0 bg-brand-500 hover:bg-brand-600 text-white font-bold p-3 rounded-xl transition-all shadow-sm flex flex-col items-center justify-center gap-1">
                     <i class="fa-solid fa-folder-plus text-sm"></i>
                     <span class="text-[8px]">제품 추가</span>
                 </button>
             </div>
 
-            <!-- 카테고리 관리 버튼 -->
-            <div class="bg-white/85 backdrop-blur rounded-2xl p-4 ggumbi-shadow border border-white/60">
-                <button onclick="toggleCategoryEditMode()" class="w-full flex items-center justify-between text-xs font-bold text-brand-700 hover:text-brand-900 transition-colors">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-tags text-brand-500"></i>
-                        <span>카테고리 관리</span>
-                    </div>
-                    <span id="category-toggle-icon" class="text-sm">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </span>
-                </button>
-                
-                <!-- 카테고리 편집 패널 -->
-                <div id="category-edit-panel" class="hidden mt-3 pt-3 border-t border-brand-200 space-y-2">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="assignProductsCategory('tpu')" class="text-[10px] font-bold bg-yellow-100 text-yellow-800 border border-yellow-200 px-3 py-2 rounded-lg hover:bg-yellow-200 transition-colors">
-                            <i class="fa-solid fa-database mr-1"></i> TPU 매트
-                        </button>
-                        <button onclick="assignProductsCategory('babyroom')" class="text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200 px-3 py-2 rounded-lg hover:bg-blue-200 transition-colors">
-                            <i class="fa-solid fa-child mr-1"></i> 베이비룸
-                        </button>
-                    </div>
-                    <div class="bg-brand-50 p-2 rounded-lg border border-brand-200 text-[9px] text-brand-700 font-medium">
-                        <p class="mb-1">💡 <strong>사용 방법:</strong> 아래 버튼에서 카테고리를 선택한 후, 할당할 제품을 체크하세요.</p>
-                    </div>
-                    
-                    <!-- 카테고리별 제품 선택 -->
-                    <div id="category-product-selection" class="space-y-2 max-h-48 overflow-y-auto">
-                        <!-- 동적으로 생성됨 -->
-                    </div>
-                    
-                    <button onclick="saveCategoryAssignments()" class="w-full text-[10px] font-bold bg-green-500 text-white px-3 py-2.5 rounded-lg hover:bg-green-600 transition-colors">
-                        <i class="fa-solid fa-check mr-1"></i> 카테고리 저장
-                    </button>
-                </div>
-            </div>
-
-            <!-- 🚨 [초강력 동기화 도구] 수정한 내용을 실제 폰에 전파하는 다이렉트 버튼 -->
+            <!-- 동기화 다운로드 -->
             <div class="bg-amber-500 text-white p-4 rounded-2xl shadow-md border border-amber-400 space-y-2.5">
                 <div class="flex items-center gap-2 text-xs font-black">
                     <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
@@ -164,24 +103,45 @@
                 </button>
             </div>
 
-            <!-- 제품 검색창 -->
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-magnifying-glass text-brand-500 text-xs"></i>
+            <!-- 검색창 + 그룹 편집 버튼 -->
+            <div class="flex gap-2">
+                <div class="relative flex-grow">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-magnifying-glass text-brand-500 text-xs"></i>
+                    </div>
+                    <input type="text" id="search-input" onkeyup="filterProducts()" placeholder="매트 또는 베이비룸 품명 검색..." class="w-full bg-white border border-brand-200/80 rounded-2xl pl-11 pr-4 py-3.5 text-xs text-brand-900 placeholder-brand-400 font-medium focus:outline-none focus:border-brand-500 transition-all shadow-sm">
                 </div>
-                <input type="text" id="search-input" onkeyup="filterProducts()" placeholder="매트 또는 베이비룸 품명 검색..." class="w-full bg-white border border-brand-200/80 rounded-2xl pl-11 pr-4 py-3.5 text-xs text-brand-900 placeholder-brand-400 font-medium focus:outline-none focus:border-brand-500 transition-all shadow-sm">
+                <!-- ★ NEW: 그룹 편집 버튼 -->
+                <button id="lobby-edit-btn" onclick="toggleLobbyEditMode()" class="shrink-0 bg-white border border-brand-200 hover:border-brand-500 text-brand-700 font-bold px-3.5 py-2 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-1 transition-all">
+                    <i class="fa-solid fa-layer-group text-sm text-brand-500"></i>
+                    <span class="text-[8px]">그룹 편집</span>
+                </button>
             </div>
 
-            <!-- 카테고리별 제품 표시 -->
-            <div id="products-by-category" class="space-y-4">
-                <!-- 동적으로 생성됨 -->
+            <!-- ★ NEW: 그룹 편집 툴바 (편집 모드에서 노출) -->
+            <div id="lobby-edit-toolbar" class="hidden bg-brand-900 text-white p-4 rounded-2xl space-y-3 shadow-lg">
+                <div class="flex items-center justify-between text-xs font-black">
+                    <span><i class="fa-solid fa-layer-group mr-1.5"></i> 그룹 편집 모드</span>
+                    <button onclick="toggleLobbyEditMode()" class="text-brand-300 hover:text-white text-[10px]"><i class="fa-solid fa-xmark mr-1"></i>닫기</button>
+                </div>
+                <p class="text-[10px] text-brand-300 leading-relaxed">제품 옆 체크박스를 선택한 뒤 그룹 이름을 입력하고 저장하세요.</p>
+                <div class="flex gap-2">
+                    <input type="text" id="group-name-input" placeholder="예: 하이가드 베이비룸 세트" class="flex-grow bg-brand-800 border border-brand-600 text-white placeholder-brand-500 text-[11px] font-bold px-3 py-2 rounded-xl focus:outline-none focus:border-brand-400">
+                    <button onclick="saveNewGroup()" class="bg-brand-500 hover:bg-brand-400 text-white text-[10px] font-black px-3 py-2 rounded-xl whitespace-nowrap">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i>저장
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="selectAllInEditMode()" class="flex-1 bg-brand-700 text-[10px] font-bold py-1.5 rounded-lg hover:bg-brand-600">전체 선택</button>
+                    <button onclick="deselectAllInEditMode()" class="flex-1 bg-brand-700 text-[10px] font-bold py-1.5 rounded-lg hover:bg-brand-600">선택 해제</button>
+                </div>
+                <span id="edit-selected-count" class="text-[9px] text-brand-400 block text-center">선택된 제품: 0개</span>
             </div>
 
             <div class="space-y-3" id="product-list-container"></div>
         </section>
 
-        <!-- -->
-        <!-- [VIEW 2: 개별 제품 상세 매뉴얼 페이지] -->
+        <!-- ===== VIEW 2: 제품 상세 ===== -->
         <section id="view-detail" class="hidden space-y-5">
             <div class="flex items-center justify-between">
                 <button onclick="goBackToLobby()" class="flex items-center gap-1.5 text-xs text-brand-700 hover:text-brand-900 font-bold bg-white/80 border border-brand-200/80 px-3.5 py-2 rounded-xl shadow-sm">
@@ -201,919 +161,2052 @@
                 </div>
             </div>
 
-            <!-- 중요 유의 사항 알림판 -->
             <div class="bg-white/90 border-l-4 border-brand-500 p-4 rounded-r-2xl shadow-sm space-y-1.5">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-1.5 text-brand-900 text-xs font-black">
-                        <i class="fa-solid fa-triangle-exclamation text-brand-500 animate-pulse"></i>
-                        <span>패킹 핵심 유의서</span>
-                    </div>
-                    <button onclick="toggleTextColorPicker()" class="text-[10px] text-brand-600 hover:text-brand-900 font-bold transition-colors" id="text-color-toggle-btn">
-                        <i class="fa-solid fa-palette"></i> 색상
-                    </button>
+                <div class="flex items-center space-x-1.5 text-brand-900 text-xs font-black">
+                    <i class="fa-solid fa-triangle-exclamation text-brand-500 animate-pulse"></i>
+                    <span>패킹 핵심 유의서</span>
                 </div>
-                
-                <!-- 텍스트 색상 선택 팔레트 -->
-                <div id="text-color-picker" class="hidden bg-brand-50 p-3 rounded-lg border border-brand-200 space-y-2">
-                    <p class="text-[9px] font-bold text-brand-700">텍스트 색상 선택:</p>
-                    <div class="flex flex-wrap gap-2">
-                        <button class="color-picker-btn" style="background-color: #000000;" onclick="applyTextColor('#000000', this)" title="검정색"></button>
-                        <button class="color-picker-btn" style="background-color: #ef4444;" onclick="applyTextColor('#ef4444', this)" title="빨강색"></button>
-                        <button class="color-picker-btn" style="background-color: #ea580c;" onclick="applyTextColor('#ea580c', this)" title="주황색"></button>
-                        <button class="color-picker-btn" style="background-color: #eab308;" onclick="applyTextColor('#eab308', this)" title="노랑색"></button>
-                        <button class="color-picker-btn" style="background-color: #22c55e;" onclick="applyTextColor('#22c55e', this)" title="초록색"></button>
-                        <button class="color-picker-btn" style="background-color: #0ea5e9;" onclick="applyTextColor('#0ea5e9', this)" title="파랑색"></button>
-                        <button class="color-picker-btn" style="background-color: #8b5cf6;" onclick="applyTextColor('#8b5cf6', this)" title="보라색"></button>
-                        <button class="color-picker-btn" style="background-color: #ec4899;" onclick="applyTextColor('#ec4899', this)" title="핑크색"></button>
-                    </div>
-                    <button onclick="resetTextColor()" class="w-full text-[9px] font-bold bg-red-100 text-red-700 border border-red-200 px-2 py-1.5 rounded transition-colors hover:bg-red-200">
-                        <i class="fa-solid fa-undo mr-1"></i> 초기화
-                    </button>
-                </div>
-                
                 <p class="text-[11px] text-brand-850 leading-relaxed font-semibold" id="detail-product-warning">주의사항</p>
             </div>
 
-            <!-- -->
-            <!-- ⚡ [TPU 매트 포장 시뮬레이터 구역] -->
+            <!-- TPU 시뮬레이터 -->
             <div id="simulator-tpu-mat" class="bg-white rounded-2xl p-5 space-y-4 ggumbi-shadow border border-brand-100 hidden">
                 <div class="flex items-center justify-between text-xs font-black text-brand-900">
                     <h3><i class="fa-solid fa-receipt text-brand-500 mr-1.5"></i> 실시간 오더/송장 수량 대입 (단독 매트)</h3>
                     <span class="text-[9px] text-brand-700 font-extrabold bg-brand-100 px-2 py-0.5 rounded" id="detail-max-limit-badge">최대 6개 한도</span>
                 </div>
                 <div class="flex items-center justify-between bg-brand-50 p-3 rounded-xl border border-brand-100">
-                    <button onclick="decreaseOrderQty()" class="w-9 h-9 bg-rose-100 hover:bg-rose-200 text-rose-700 font-black text-sm rounded-lg transition-all">
-                        <i class="fa-solid fa-minus"></i>
-                    </button>
-                    <div class="flex flex-col items-center">
-                        <span class="text-2xl font-black text-brand-900" id="order-qty-display">6</span>
-                        <span class="text-[9px] text-brand-700 font-bold">개</span>
+                    <div>
+                        <span class="text-[9px] text-brand-600 block font-bold">매트 지시 수량</span>
+                        <span class="font-extrabold text-brand-900 text-xs" id="sim-mat-val-label">수량 대입</span>
                     </div>
-                    <button onclick="increaseOrderQty()" class="w-9 h-9 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-black text-sm rounded-lg transition-all">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-brand-50 p-3 rounded-xl border-2 border-brand-200">
-                        <p class="text-[9px] text-brand-700 font-extrabold mb-2">📦 소형박스</p>
-                        <p class="text-[10px] text-brand-900 font-black leading-relaxed" id="detail-box-small-info">박스정보</p>
-                    </div>
-                    <div class="bg-brand-50 p-3 rounded-xl border-2 border-brand-300">
-                        <p class="text-[9px] text-brand-700 font-extrabold mb-2">📦 대형박스</p>
-                        <p class="text-[10px] text-brand-900 font-black leading-relaxed" id="detail-box-large-info">박스정보</p>
+                    <div class="flex items-center gap-3">
+                        <button onclick="adjustSimQty('mat', -1)" class="w-8 h-8 bg-white border border-brand-200 rounded-lg font-black text-sm text-brand-700 hover:border-brand-500 transition-colors">-</button>
+                        <span id="sim-mat-qty" class="font-black text-sm text-brand-900 w-6 text-center">6</span>
+                        <button onclick="adjustSimQty('mat', 1)" class="w-8 h-8 bg-white border border-brand-200 rounded-lg font-black text-sm text-brand-700 hover:border-brand-500 transition-colors">+</button>
                     </div>
                 </div>
-
-                <div id="detail-accessories-list" class="space-y-2 bg-brand-50 p-3 rounded-xl border border-brand-200">
-                    <!-- 부자재 동적 렌더링 -->
+                <div class="bg-brand-50 border border-brand-100 p-3.5 rounded-xl flex items-center gap-3">
+                    <div class="bg-brand-300 p-2.5 rounded-lg text-white"><i class="fa-solid fa-box text-sm"></i></div>
+                    <div>
+                        <span class="text-[9px] text-brand-600 block font-extrabold uppercase tracking-wider">추천 사용 공박스 규격</span>
+                        <div class="text-xs font-black text-brand-900" id="box-guide-recommendation">분석 중...</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- -->
-            <!-- ⚡ [베이비룸 포장 가이드 구역] -->
+            <!-- 베이비룸 시뮬레이터 -->
             <div id="simulator-babyroom" class="bg-white rounded-2xl p-5 space-y-4 ggumbi-shadow border border-brand-100 hidden">
-                <div class="flex items-center space-x-1.5 text-xs font-black text-brand-900">
-                    <h3><i class="fa-solid fa-house-circle-check text-brand-500 mr-1.5"></i> 베이비룸 포장 가이드</h3>
+                <div class="flex items-center justify-between text-xs font-black text-brand-900">
+                    <h3><i class="fa-solid fa-receipt text-brand-500 mr-1.5"></i> 베이비룸 오더 구성 선택 (단일 제품 규격)</h3>
                 </div>
-
-                <div class="space-y-2">
-                    <p class="text-[10px] text-brand-700 font-bold">✅ 권장 포장 박스:</p>
-                    <div class="bg-brand-50 p-3 rounded-xl border border-brand-200 text-[10px] text-brand-900 font-black leading-relaxed" id="detail-babyroom-box">
-                        박스 정보
+                <div id="babyroom-size-buttons-container" class="flex bg-brand-50 p-1.5 rounded-xl border border-brand-100 justify-center"></div>
+                <div id="babyroom-box-split-warning" class="bg-amber-500/10 border border-amber-400 p-3.5 rounded-xl flex items-center gap-3 hidden">
+                    <div class="bg-amber-500 p-2 text-white rounded-lg animate-pulse"><i class="fa-solid fa-boxes-packing text-sm"></i></div>
+                    <div>
+                        <span class="text-[9px] text-amber-800 block font-black uppercase" id="babyroom-box-split-title">🚨 16P 구성 포장 분할 지침</span>
+                        <div class="text-xs font-black text-amber-950" id="babyroom-box-split-desc">8P 박스 2개에 부자재 소포장을 분할하여 포장!</div>
                     </div>
                 </div>
-
-                <div id="detail-babyroom-components" class="space-y-2 bg-brand-50 p-3 rounded-xl border border-brand-200">
-                    <!-- 베이비룸 구성품 동적 렌더링 -->
+                <div class="space-y-2">
+                    <span class="text-[10px] text-brand-700 font-extrabold uppercase tracking-wider block"><i class="fa-solid fa-list-check text-brand-500 mr-1"></i> 패키지 박스 내 투입 부품 리스트</span>
+                    <div class="bg-brand-50 p-3 rounded-xl border border-brand-100 space-y-2 text-xs font-bold" id="babyroom-components-list"></div>
                 </div>
             </div>
 
-            <!-- 🔐 Admin QR Panel (숨겨진 패널) -->
-            <div id="admin-panel" class="hidden bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-2xl space-y-2">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xs font-black text-blue-900 flex items-center gap-2">
-                        <i class="fa-solid fa-qrcode"></i> 🔐 Admin QR 패널
-                    </h3>
-                    <button onclick="toggleAdminPanel()" class="text-blue-600 hover:text-blue-900" id="admin-chevron">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
+            <!-- 적재 레이아웃 -->
+            <div class="bg-white rounded-2xl p-5 space-y-3.5 border border-brand-100 ggumbi-shadow">
+                <div class="flex items-center justify-between text-[11px] font-black text-brand-900">
+                    <span><i class="fa-regular fa-eye text-brand-500 mr-1"></i> 포장 적재 레이아웃 (실시간 Top-View)</span>
+                    <span id="packing-box-indicator" class="text-[8px] bg-brand-100 text-brand-800 border px-2 py-0.5 rounded font-black">BOX A</span>
                 </div>
-
-                <div class="grid grid-cols-2 gap-3 text-[9px]">
-                    <div>
-                        <p class="text-blue-700 font-bold mb-1">제품 코드:</p>
-                        <p class="text-blue-900 font-mono font-black" id="qr-target-code">CODE</p>
-                    </div>
-                    <div>
-                        <p class="text-blue-700 font-bold mb-1">제품명:</p>
-                        <p class="text-blue-900 font-bold" id="qr-target-name">이름</p>
-                    </div>
+                <div class="border-2 border-dashed border-brand-200 rounded-xl p-4 bg-brand-50 space-y-3">
+                    <div id="visual-layout-grid" class="grid gap-2"></div>
+                    <div id="visual-layout-grid-b" class="grid gap-2 hidden pt-3 border-t-2 border-dashed border-brand-200"></div>
                 </div>
-
-                <div>
-                    <p class="text-blue-700 font-bold mb-1 text-[9px]">직접 접근 URL:</p>
-                    <p class="text-[8px] text-blue-900 font-mono break-all bg-white p-2 rounded border border-blue-200" id="qr-target-link">URL</p>
-                </div>
-
-                <div class="flex justify-center">
-                    <img id="qr-image" src="" alt="QR Code" class="w-32 h-32 border-4 border-blue-300 rounded-xl">
-                </div>
-
-                <button onclick="downloadQrImage()" class="w-full text-[9px] font-black text-blue-700 bg-white border border-blue-300 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors">
-                    <i class="fa-solid fa-download"></i> QR 코드 이미지 저장
-                </button>
             </div>
         </section>
     </main>
 
-    <!-- 푸터 및 알림 시스템 -->
-    <footer id="toast" class="hidden"></footer>
-    <div id="toast-message"></div>
-    <div id="toast-icon"></div>
-
-    <!-- [MODALS] -->
-
-    <!-- 제품 추가/수정 관리 모달 -->
-    <div id="admin-editor-modal" class="hidden fixed inset-0 z-50 bg-black/50 flex items-end md:items-center justify-center overflow-auto">
-        <div class="w-full md:max-w-lg bg-white rounded-t-3xl md:rounded-2xl p-6 space-y-5 max-h-[95vh] overflow-y-auto">
-            <div class="flex items-center justify-between">
-                <h2 class="text-sm font-black text-brand-900"><i class="fa-solid fa-pen-to-square text-brand-500 mr-2"></i> 제품 정보 편집</h2>
-                <button onclick="closeAdminEditorModal()" class="text-brand-500 hover:text-brand-900 text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+    <!-- ===== CMS MODAL: 제품 등록/수정 ===== -->
+    <div id="admin-editor-modal" class="fixed inset-0 bg-brand-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-6 space-y-4 max-h-[90vh] overflow-y-auto ggumbi-shadow border border-brand-100">
+            <div class="flex items-center justify-between border-b border-brand-100 pb-3">
+                <h3 class="text-sm font-black text-brand-900 flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-pen text-brand-500"></i>
+                    <span id="modal-title-text">제품 가이드 등록</span>
+                </h3>
+                <button onclick="closeAdminEditorModal()" class="text-brand-400 hover:text-brand-600 text-sm"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- 기본 정보 -->
-            <div class="space-y-4 border-b border-brand-200 pb-4">
+            <div class="space-y-3.5 text-xs text-brand-900">
+                <input type="hidden" id="edit-original-id">
+
                 <div>
-                    <label class="text-[10px] font-black text-brand-700 block mb-1">📦 제품 타입</label>
-                    <select id="input-type" onchange="toggleCmsFormType()" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900 focus:outline-none focus:border-brand-500">
-                        <option value="tpu">TPU 매트</option>
-                        <option value="babyroom">베이비룸</option>
+                    <label class="block text-[10px] font-bold text-brand-700 mb-1">제품 유형</label>
+                    <select id="input-type" onchange="toggleCmsFormType()" class="w-full bg-brand-50 border border-brand-200 rounded-xl px-3 py-2.5 font-bold focus:outline-none focus:border-brand-500">
+                        <option value="tpu-mat">TPU 단일 매트 제품군</option>
+                        <option value="babyroom">하이가드 베이비룸 단일세트</option>
                     </select>
                 </div>
-
                 <div>
-                    <label class="text-[10px] font-black text-brand-700 block mb-1">🔢 식별 코드 (필수)</label>
-                    <input type="text" id="input-code" placeholder="예: MAT-001" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900 focus:outline-none focus:border-brand-500">
+                    <label class="block text-[10px] font-bold text-brand-700 mb-1">제품 코드</label>
+                    <input type="text" id="input-code" class="w-full bg-brand-50 border border-brand-200 rounded-xl px-3 py-2.5 font-bold focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-brand-700 mb-1">제품 한글 명칭</label>
+                    <input type="text" id="input-name" class="w-full bg-brand-50 border border-brand-200 rounded-xl px-3 py-2.5 font-bold focus:outline-none focus:border-brand-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-brand-700 mb-1">적치 랙 구역</label>
+                    <input type="text" id="input-zone" class="w-full bg-brand-50 border border-brand-200 rounded-xl px-3 py-2.5 font-bold focus:outline-none focus:border-brand-500">
                 </div>
 
-                <div>
-                    <label class="text-[10px] font-black text-brand-700 block mb-1">🏷️ 제품 한글 명칭 (필수)</label>
-                    <input type="text" id="input-name" placeholder="예: 꿈비 TPU 베이스" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900 focus:outline-none focus:border-brand-500">
-                </div>
-
-                <div>
-                    <label class="text-[10px] font-black text-brand-700 block mb-1">📍 랙 보관 구역</label>
-                    <input type="text" id="input-zone" placeholder="예: A-1 구간" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900 focus:outline-none focus:border-brand-500">
-                </div>
-
-                <div>
-                    <label class="text-[10px] font-black text-brand-700 block mb-1">⚠️ 패킹 핵심 유의서</label>
-                    <textarea id="input-warning" placeholder="포장 시 주의할 사항을 작성하세요..." class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900 focus:outline-none focus:border-brand-500 resize-none h-24"></textarea>
-                </div>
-            </div>
-
-            <!-- TPU 매트 전용 설정 -->
-            <div id="cms-form-tpu" class="space-y-4 border-b border-brand-200 pb-4">
-                <p class="text-[10px] font-black text-brand-700">🔧 TPU 매트 포장 설정:</p>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[9px] font-black text-brand-700 block mb-1">기본 수량</label>
-                        <input type="number" id="input-default-qty" value="6" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900">
+                <!-- TPU 전용 -->
+                <div id="cms-tpu-group" class="bg-brand-50 p-3 rounded-2xl border border-brand-100 space-y-3">
+                    <span class="text-[10px] font-extrabold text-brand-800 flex items-center gap-1">
+                        <i class="fa-solid fa-sliders text-brand-500"></i> TPU 자가 가변형 공박스 규칙 커스텀
+                    </span>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[9px] font-bold text-brand-600 mb-1">기본 입수 설정량</label>
+                            <input type="number" id="input-default-qty" value="6" class="w-full bg-white border border-brand-200 rounded-xl px-3 py-2 font-bold focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-brand-600 mb-1">합포 최대 수량</label>
+                            <input type="number" id="input-max-qty" value="14" class="w-full bg-white border border-brand-200 rounded-xl px-3 py-2 font-bold focus:outline-none">
+                        </div>
                     </div>
                     <div>
-                        <label class="text-[9px] font-black text-brand-700 block mb-1">최대 수량</label>
-                        <input type="number" id="input-max-qty" value="12" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900">
+                        <label class="block text-[9px] font-bold text-brand-600 mb-1">소형 박스 제한 분기 수량</label>
+                        <input type="number" id="input-box-threshold" value="2" class="w-full bg-white border border-brand-200 rounded-xl px-3 py-2 font-bold focus:outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[9px] font-bold text-brand-600 mb-1">소형 박스명</label>
+                            <input type="text" id="input-box-small-name" value="2P 소형박스" class="w-full bg-white border border-brand-200 rounded-xl px-2.5 py-2 font-bold focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-brand-600 mb-1">대형 박스명</label>
+                            <input type="text" id="input-box-large-name" value="14P 초대형박스" class="w-full bg-white border border-brand-200 rounded-xl px-2.5 py-2 font-bold focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="border-t border-brand-200/60 pt-2 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-[10px] font-bold text-brand-700">매트용 동반 부자재 설정</label>
+                            <button type="button" onclick="addTpuAccessoryRow()" class="bg-brand-500 text-white text-[8px] font-bold px-2 py-1 rounded hover:bg-brand-600 transition-colors"><i class="fa-solid fa-plus"></i> 추가</button>
+                        </div>
+                        <div id="cms-tpu-accessories-list" class="space-y-1.5"></div>
                     </div>
                 </div>
 
-                <div>
-                    <label class="text-[9px] font-black text-brand-700 block mb-1">박스 전환 기준 수량</label>
-                    <input type="number" id="input-box-threshold" value="2" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900">
+                <!-- 베이비룸 전용 -->
+                <div id="cms-babyroom-group" class="bg-brand-50 p-3 rounded-2xl border border-brand-100 space-y-3 hidden">
+                    <span class="text-[10px] font-extrabold text-brand-800 flex items-center gap-1">
+                        <i class="fa-solid fa-shapes text-brand-500"></i> 베이비룸 규격 및 부자재 자유 설정
+                    </span>
+                    <div>
+                        <label class="block text-[9px] font-bold text-brand-600 mb-1">베이비룸 세트 규격</label>
+                        <select id="input-babyroom-size" class="w-full bg-white border border-brand-200 rounded-xl px-3 py-2 font-bold focus:outline-none">
+                            <option value="10P">10P</option>
+                            <option value="12P">12P</option>
+                            <option value="14P">14P</option>
+                            <option value="16P">16P (8P 2박스)</option>
+                            <option value="18P">18P (10P+8P 2박스)</option>
+                            <option value="20P">20P (10P+10P 2박스)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-bold text-brand-600 mb-1">기본 권장 공박스 문구</label>
+                        <input type="text" id="input-babyroom-box-name" placeholder="10P 전용 박스 사용" class="w-full bg-white border border-brand-200 rounded-xl px-2.5 py-2 font-bold focus:outline-none">
+                    </div>
+
+                    <!-- ★ NEW: 색상 팔레트 안내 -->
+                    <div class="bg-white border border-brand-200 rounded-xl p-3 space-y-2">
+                        <span class="text-[10px] font-extrabold text-brand-800 block"><i class="fa-solid fa-palette text-brand-500 mr-1"></i> 구성품 텍스트 색상 안내</span>
+                        <p class="text-[9px] text-brand-600 leading-relaxed">각 구성품 행 오른쪽의 색상 점을 눌러 텍스트 강조 색상을 지정할 수 있습니다. 가드류와 부자재를 색으로 구분하세요.</p>
+                        <div class="flex gap-1.5 flex-wrap">
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded" style="color:#1d4ed8; background:#dbeafe;">파란색 예시</span>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded" style="color:#b45309; background:#fef3c7;">주황색 예시</span>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded" style="color:#15803d; background:#dcfce7;">초록색 예시</span>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded" style="color:#be185d; background:#fce7f3;">핑크색 예시</span>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded" style="color:#6d28d9; background:#ede9fe;">보라색 예시</span>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded" style="color:#dc2626; background:#fee2e2;">빨간색 예시</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between border-t border-brand-200/60 pt-2">
+                        <span class="text-[9px] font-extrabold text-brand-700">구성 가드 & 부자재 리스트</span>
+                        <button type="button" onclick="addBabyroomComponentRow()" class="bg-brand-500 text-white text-[8px] font-bold px-2 py-1 rounded hover:bg-brand-600 transition-colors"><i class="fa-solid fa-plus"></i> 구성품 추가</button>
+                    </div>
+                    <div id="cms-babyroom-components-list" class="space-y-1.5"></div>
                 </div>
 
                 <div>
-                    <label class="text-[9px] font-black text-brand-700 block mb-1">소형 박스명</label>
-                    <input type="text" id="input-box-small-name" placeholder="예: 소형 박스" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900">
-                </div>
-
-                <div>
-                    <label class="text-[9px] font-black text-brand-700 block mb-1">대형 박스명</label>
-                    <input type="text" id="input-box-large-name" placeholder="예: 대형 박스" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900">
-                </div>
-
-                <div>
-                    <label class="text-[9px] font-black text-brand-700 block mb-2">부자재 관리 (이름, 수량)</label>
-                    <div id="cms-accessories-editor" class="space-y-2 max-h-32 overflow-y-auto"></div>
-                    <button onclick="addAccessoryField()" class="w-full text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg hover:bg-emerald-100 transition-colors mt-2">
-                        <i class="fa-solid fa-plus"></i> 부자재 추가
-                    </button>
+                    <label class="block text-[10px] font-bold text-brand-700 mb-1">현장 포장 유의 및 경고사항</label>
+                    <textarea id="input-warning" rows="2" class="w-full bg-brand-50 border border-brand-200 rounded-xl px-3 py-2 text-[11px] font-bold focus:outline-none focus:border-brand-500"></textarea>
                 </div>
             </div>
 
-            <!-- 베이비룸 전용 설정 -->
-            <div id="cms-form-babyroom" class="hidden space-y-4 border-b border-brand-200 pb-4">
-                <p class="text-[10px] font-black text-brand-700">🔧 베이비룸 포장 설정:</p>
-
-                <div>
-                    <label class="text-[9px] font-black text-brand-700 block mb-1">베이비룸 사이즈</label>
-                    <input type="text" id="input-babyroom-size" placeholder="예: 120 x 80 cm" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900">
-                </div>
-
-                <div>
-                    <label class="text-[9px] font-black text-brand-700 block mb-1">권장 박스명</label>
-                    <input type="text" id="input-babyroom-box-name" placeholder="예: 120x80 전용 박스" class="w-full border border-brand-200 rounded-lg px-3 py-2 text-xs font-semibold text-brand-900">
-                </div>
-
-                <div>
-                    <label class="text-[9px] font-black text-brand-700 block mb-2">구성품 관리</label>
-                    <div id="cms-babyroom-components-editor" class="space-y-2 max-h-32 overflow-y-auto"></div>
-                    <button onclick="addBabyroomComponentField()" class="w-full text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg hover:bg-emerald-100 transition-colors mt-2">
-                        <i class="fa-solid fa-plus"></i> 구성품 추가
-                    </button>
-                </div>
-            </div>
-
-            <input type="hidden" id="edit-original-id" value="">
-
-            <!-- 제출 버튼 -->
-            <div class="flex gap-2">
-                <button onclick="saveAdminProduct()" class="flex-1 bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-lg transition-colors text-sm">
-                    💾 저장
-                </button>
-                <button onclick="closeAdminEditorModal()" class="flex-1 bg-brand-100 hover:bg-brand-200 text-brand-900 font-bold py-3 rounded-lg transition-colors text-sm">
-                    취소
-                </button>
+            <div class="flex items-center gap-2 pt-2 border-t border-brand-100">
+                <button onclick="closeAdminEditorModal()" class="flex-grow bg-brand-50 border border-brand-200 text-brand-700 text-xs py-2.5 rounded-xl font-bold">취소</button>
+                <button onclick="saveAdminProduct()" class="flex-grow bg-brand-500 hover:bg-brand-600 text-white text-xs py-2.5 rounded-xl font-bold shadow-sm">매뉴얼 등록</button>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript 코드 -->
-    <script>
-        // ===== 데이터 저장소 =====
-        let productsDb = [];
-        let currentActiveProductId = null;
-        let categoryEditMode = false;
-        let currentSelectedProducts = new Set();
-        let tempTpuAccessories = [];
-        let tempBabyroomComponents = [];
-        let currentTextColor = '#000000';
+    <!-- ===== QR 패널 ===== -->
+    <section class="max-w-md w-full mx-auto px-4 pb-8 space-y-3">
+        <div class="bg-white/80 border border-white/90 rounded-2xl p-4 shadow-sm">
+            <button onclick="toggleAdminPanel()" class="w-full flex items-center justify-between text-xs font-black text-brand-900">
+                <span><i class="fa-solid fa-qrcode mr-1.5 text-brand-500"></i> 현장 QR 출력 및 다이렉트 링크</span>
+                <i id="admin-chevron" class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200"></i>
+            </button>
+            <div id="admin-panel" class="hidden space-y-3.5 pt-3.5 border-t border-brand-100">
+                <p class="text-[10px] text-brand-700 leading-relaxed font-bold">실제 랙 전면에 라벨지로 인쇄 부착하면 해당 상세 매뉴얼 페이지로 자동 다이렉트 랜딩됩니다.</p>
+                <div class="flex items-center gap-4 bg-white p-3.5 rounded-xl border border-brand-200 shadow-sm">
+                    <div id="qr-holder" class="bg-white p-2 rounded-lg shrink-0 flex items-center justify-center shadow">
+                        <img id="qr-image" src="" alt="QR" class="w-20 h-20">
+                    </div>
+                    <div class="space-y-1.5 overflow-hidden">
+                        <span class="text-[9px] bg-brand-100 text-brand-800 font-extrabold px-2 py-0.5 rounded border border-brand-200 uppercase" id="qr-target-code">CODE</span>
+                        <div class="text-[10px] text-brand-900 font-black truncate max-w-[180px]" id="qr-target-name">...</div>
+                        <div class="text-[9px] text-brand-500 font-mono select-all truncate max-w-[180px]" id="qr-target-link">Direct Link</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        const STORAGE_KEY = 'ggumbi_products_data';
-        const CATEGORY_STORAGE_KEY = 'ggumbi_product_categories';
+    <!-- 토스트 -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white border border-brand-200 text-brand-900 text-xs py-3.5 px-6 rounded-2xl shadow-2xl flex items-center gap-2.5 z-50 opacity-0 pointer-events-none transition-all duration-300">
+        <i id="toast-icon" class="fa-solid fa-circle-info text-brand-500"></i>
+        <span id="toast-message" class="font-extrabold">알림 메시지</span>
+    </div>
 
-        // ===== 로컬스토리지 관리 =====
-        function loadProductsData() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                try {
-                    productsDb = JSON.parse(stored);
-                } catch (e) {
-                    console.log('저장된 데이터가 없습니다.');
-                    initializeDefaultProducts();
-                }
-            } else {
-                initializeDefaultProducts();
+    <footer class="py-6 text-center text-[10px] text-brand-700 font-bold mt-auto border-t border-brand-200/40 bg-white/40">
+        <div class="max-w-md mx-auto px-4">
+            <p>© 2026 GGUMBI Store Logistics Knowledge Hub.</p>
+            <p class="mt-1 text-brand-600">가변형 공박스(2P/6P/8P/10P) 자재 자동 분석 솔루션 [자가 가변형]</p>
+        </div>
+    </footer>
+
+<script>
+    const CLIENT_VERSION = "1780536125607";
+
+    // ★ 색상 팔레트 정의
+    const COLOR_PALETTE = [
+        { label: "기본(검정)", text: "#223d40", bg: "" },
+        { label: "파랑", text: "#1d4ed8", bg: "#dbeafe" },
+        { label: "주황", text: "#b45309", bg: "#fef3c7" },
+        { label: "초록", text: "#15803d", bg: "#dcfce7" },
+        { label: "핑크", text: "#be185d", bg: "#fce7f3" },
+        { label: "보라", text: "#6d28d9", bg: "#ede9fe" },
+        { label: "빨강", text: "#dc2626", bg: "#fee2e2" },
+        { label: "청록", text: "#0f766e", bg: "#ccfbf1" },
+    ];
+
+    /* DATA_PLACEHOLDER_START */
+    const initialProductsDb = [
+          {
+                    "id": "licoco-corner",
+                    "type": "tpu-mat",
+                    "code": "8800368450026",
+                    "name": "[리코코] 디자인 TPU 클립매트 60x60x2.5cm 모던 갤럭시 코너형",
+                    "zone": "1N",
+                    "warning": "-매트 기본 입수 6개\n-전용 고정 클립 수량 확인",
+                    "defaultQty": 6,
+                    "maxQty": 6,
+                    "boxThreshold": 2,
+                    "boxSmallName": "2P 소형박스",
+                    "boxLargeName": "6P 표준박스",
+                    "accessories": [{"name": "전용 고정 클립 (코너)","qty": 6}]
+          },
+          {
+                    "id": "licoco-center",
+                    "type": "tpu-mat",
+                    "code": "8800368450019",
+                    "name": "[리코코] 디자인 TPU 클립매트 60x60x2.5cm 모던 갤럭시 센터형",
+                    "zone": "1N",
+                    "warning": "-매트 기본 입수 6개\n-전용 고정 클립 수량 확인",
+                    "defaultQty": 6,
+                    "maxQty": 6,
+                    "boxThreshold": 2,
+                    "boxSmallName": "2P 소형박스",
+                    "boxLargeName": "6P 표준박스",
+                    "accessories": [{"name": "전용 고정 클립 (센터)","qty": 12}]
+          },
+          {
+                    "id": "licoco-side",
+                    "type": "tpu-mat",
+                    "code": "8800368450002",
+                    "name": "[리코코] 디자인 TPU 클립매트 60x60x2.5cm 모던 갤럭시 사이드형",
+                    "zone": "1N",
+                    "warning": "-매트 기본 입수 6개\n-전용 고정 클립 수량 확인",
+                    "defaultQty": 6,
+                    "maxQty": 6,
+                    "boxThreshold": 2,
+                    "boxSmallName": "2P 소형박스",
+                    "boxLargeName": "6P 표준박스",
+                    "accessories": [{"name": "전용 고정 클립 (사이드)","qty": 9}]
+          },
+          {
+                    "id": "ggumbi-babyroom",
+                    "type": "babyroom",
+                    "code": "8800257942298",
+                    "name": "[꿈비] 하이가드 베이비룸 200x140 아이보리 10p",
+                    "zone": "HW",
+                    "warning": "- 가드 및 도어를 제외한 부자재는 부자재용 비닐 지퍼백 사용",
+                    "babyroomSize": "10P",
+                    "boxRecommended": "10P 전용 박스",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 5},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 6},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 1}]
+          },
+          {
+                    "id": "item-1780374858590",
+                    "type": "babyroom",
+                    "code": "8800257942304",
+                    "name": "[꿈비] 하이가드 베이비룸 252x140 아이보리 12p",
+                    "zone": "HW",
+                    "warning": "- 가드 및 도어를 제외한 부자재는 부자재용 비닐 지퍼백 사용",
+                    "babyroomSize": "12P",
+                    "boxRecommended": "12P 전용 박스 사용",
+                    "components": [{"name": "640 가드","qty": 6},{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 8},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 32}]
+          },
+          {
+                    "id": "item-1780374987406",
+                    "type": "babyroom",
+                    "code": "8800257942311",
+                    "name": "[꿈비] 하이가드 베이비룸 292x140 아이보리 12p",
+                    "zone": "HW",
+                    "warning": "- 가드 및 도어를 제외한 부자재는 부자재용 비닐 지퍼백 사용",
+                    "babyroomSize": "12P",
+                    "boxRecommended": "12P 전용 박스 사용",
+                    "components": [{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 5},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 2},{"name": "일자 커넥터","qty": 8},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 32}]
+          },
+          {
+                    "id": "item-1780375100758",
+                    "type": "babyroom",
+                    "code": "8800257942328",
+                    "name": "[꿈비] 하이가드 베이비룸 323x140 아이보리 14p",
+                    "zone": "HW",
+                    "warning": "- 가드 및 도어를 제외한 부자재는 부자재용 비닐 지퍼백 사용",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 전용 박스 사용",
+                    "components": [{"name": "640 가드","qty": 6},{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 5},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 4},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780375210150",
+                    "type": "babyroom",
+                    "code": "8800257942441",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 252x200 아이보리 14p",
+                    "zone": "HW",
+                    "warning": "- 가드 및 도어를 제외한 부자재는 부자재용 비닐 지퍼백 사용",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 8},{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780375366237",
+                    "type": "babyroom",
+                    "code": "8800257942465",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 292x200 아이보리 14p",
+                    "zone": "HW",
+                    "warning": "- 가드 및 도어를 제외한 부자재는 부자재용 비닐 지퍼백 사용",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 5},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 2},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780375534918",
+                    "type": "babyroom",
+                    "code": "8800257942472,8800257942489",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 323x200 아이보리_8p_A",
+                    "zone": "HW",
+                    "warning": "⭐ 8P 박스 2개 분할 패킹 필수 ⭐\n-8P A박스 , 8P B박스 각각 가드,도어 분할해서 출고",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P A박스사용",
+                    "components": [{"name": "640 가드","qty": 8}]
+          },
+          {
+                    "id": "item-1780375614053",
+                    "type": "babyroom",
+                    "code": "8800257942489,8800257942472",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 323x200 아이보리_8p_B",
+                    "zone": "HW",
+                    "warning": "⭐ 8P 박스 2개 분할 패킹 필수 ⭐\n-8P A박스 , 8P B박스 각각 가드,도어 분할해서 출고",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P B박스 사용",
+                    "components": [{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 5},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 12},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 1},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 44}]
+          },
+          {
+                    "id": "item-1780385173903",
+                    "type": "babyroom",
+                    "code": "8800257942533,8800257942540",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 382x200 아이보리_8p_A",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P A박스사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "840 가드","qty": 6}]
+          },
+          {
+                    "id": "item-1780385267503",
+                    "type": "babyroom",
+                    "code": "8800257942540,8800257942533",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 382x200 아이보리_8p_B",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P B박스사용",
+                    "components": [{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 12},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 1},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 44}]
+          },
+          {
+                    "id": "item-1780385585167",
+                    "type": "babyroom",
+                    "code": "8800257942496,8800257942502",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 323x230 아이보리_8p_A",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P A박스사용",
+                    "components": [{"name": "640 가드","qty": 6},{"name": "730 가드","qty": 2}]
+          },
+          {
+                    "id": "item-1780385661143",
+                    "type": "babyroom",
+                    "code": "8800257942502,8800257942496",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 323x230 아이보리_8p_B",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P B박스사용",
+                    "components": [{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 4},{"name": "일자 커넥터","qty": 12},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 4},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 44}]
+          },
+          {
+                    "id": "item-1780385741247",
+                    "type": "babyroom",
+                    "code": "8800257942557,8800257942564",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 382x230 아이보리_8p_A",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P A박스사용",
+                    "components": [{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 1},{"name": "840 가드","qty": 2},{"name": "750 도어","qty": 1}]
+          },
+          {
+                    "id": "item-1780385827831",
+                    "type": "babyroom",
+                    "code": "8800257942564,8800257942557",
+                    "name": "[꿈비] 하이가드 자이언트 베이비룸 382x230 아이보리_8p_B",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P B박스사용",
+                    "components": [{"name": "840 가드","qty": 8},{"name": "일자 커넥터","qty": 12},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 4},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 44}]
+          },
+          {
+                    "id": "item-1780386009959",
+                    "type": "babyroom",
+                    "code": "8800257942229",
+                    "name": "[꿈비] 하이가드 더블원피스 베이비룸 284x240 아이보리_14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 5},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 6},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 4},{"name": "5M 고정밴드","qty": 1},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780386145575",
+                    "type": "babyroom",
+                    "code": "8800257942205,8800257942212",
+                    "name": "[꿈비] 하이가드 더블원피스 베이비룸 252x252 아이보리_8p_A",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P A박스 사용",
+                    "components": [{"name": "640 가드","qty": 8}]
+          },
+          {
+                    "id": "item-1780386263095",
+                    "type": "babyroom",
+                    "code": "8800257942212,8800257942205",
+                    "name": "[꿈비] 하이가드 더블원피스 베이비룸 252x252 아이보리_8p_B",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P B박스 사용",
+                    "components": [{"name": "640 가드","qty": 4},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 12},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 8},{"name": "미끄럼 방지 패드","qty": 44}]
+          },
+          {
+                    "id": "item-1780386876614",
+                    "type": "babyroom",
+                    "code": "8809527903502",
+                    "name": "[꿈비x소브] 하이가드 베이비룸 220x280 아이보리_14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "730 가드","qty": 8},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 2},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "3.5m 고정밴드","qty": 4},{"name": "5m 고정밴드","qty": 1},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780387350437",
+                    "type": "babyroom",
+                    "code": "8800280932723",
+                    "name": "[꿈비] 하이가드 베이비룸 260x280 아이보리 16p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P A박스 사용",
+                    "components": [{"name": "730 가드","qty": 8}]
+          },
+          {
+                    "id": "item-1780387407645",
+                    "type": "babyroom",
+                    "code": "8800280932723",
+                    "name": "[꿈비] 하이가드 베이비룸 260x280 아이보리 16p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P B박스 사용",
+                    "components": [{"name": "640 가드","qty": 4},{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 12},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 8},{"name": "미끄럼 방지 패드","qty": 44}]
+          },
+          {
+                    "id": "item-1780387444933",
+                    "type": "babyroom",
+                    "code": "8800280932730",
+                    "name": "[꿈비] 하이가드 베이비룸 280x280 아이보리 16P",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P A박스 사용",
+                    "components": [{"name": "730 가드","qty": 8}]
+          },
+          {
+                    "id": "item-1780387497254",
+                    "type": "babyroom",
+                    "code": "8800280932730",
+                    "name": "[꿈비] 하이가드 베이비룸 280x280 아이보리 16P",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P B박스 사용",
+                    "components": [{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 12},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 8},{"name": "미끄럼 방지 패드","qty": 44}]
+          },
+          {
+                    "id": "item-1780387555541",
+                    "type": "babyroom",
+                    "code": "8800257942236,8800257942243",
+                    "name": "[꿈비] 하이가드 더블원피스 베이비룸 292x252 아이보리_8p_A",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P A박스 사용",
+                    "components": [{"name": "640 가드","qty": 6},{"name": "730 가드","qty": 2}]
+          },
+          {
+                    "id": "item-1780387648742",
+                    "type": "babyroom",
+                    "code": "8800257942243,8800257942236",
+                    "name": "[꿈비] 하이가드 더블원피스 베이비룸 292x252 아이보리_8p_B",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P B박스 사용",
+                    "components": [{"name": "750 가드","qty": 5},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 2},{"name": "일자 커넥터","qty": 12},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 1},{"name": "미끄럼 방지 패드","qty": 44}]
+          },
+          {
+                    "id": "item-1780387720277",
+                    "type": "babyroom",
+                    "code": "8800257942250,8800257942267",
+                    "name": "[꿈비] 하이가드 더블원피스 베이비룸 323x252 아이보리_10p_A",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "18P",
+                    "boxRecommended": "10P A박스 사용",
+                    "components": [{"name": "640 가드","qty": 10}]
+          },
+          {
+                    "id": "item-1780387888006",
+                    "type": "babyroom",
+                    "code": "8800257942267,8800257942250",
+                    "name": "[꿈비] 하이가드 더블원피스 베이비룸 323x252 아이보리_8p_B",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "18P",
+                    "boxRecommended": "8P B박스 사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 14},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 8},{"name": "5M 고정밴드","qty": 1},{"name": "미끄럼 방지 패드","qty": 50}]
+          },
+          {
+                    "id": "item-1780388037102",
+                    "type": "babyroom",
+                    "code": "8800257942274,8800257942281",
+                    "name": "[꿈비] 하이가드 더블원피스 베이비룸 382x282 아이보리_10p_A",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "18P",
+                    "boxRecommended": "10P A박스 사용",
+                    "components": [{"name": "730 가드","qty": 8},{"name": "750 가드","qty": 2}]
+          },
+          {
+                    "id": "item-1780388125021",
+                    "type": "babyroom",
+                    "code": "8800257942281,8800257942274",
+                    "name": "[꿈비] 하이가드 더블원피스 베이비룸 382x282 아이보리_8p_B",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "18P",
+                    "boxRecommended": "8P B박스 사용",
+                    "components": [{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 6},{"name": "일자 커넥터","qty": 14},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 7},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 50}]
+          },
+          {
+                    "id": "item-1780388578437",
+                    "type": "babyroom",
+                    "code": "코드X",
+                    "name": "[꿈비] 트리플 원피스 베이비룸 세트 252X400 20P",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "20P",
+                    "boxRecommended": "10P A박스 사용",
+                    "components": [{"name": "640 가드","qty": 10}]
+          },
+          {
+                    "id": "item-1780388660701",
+                    "type": "babyroom",
+                    "code": "코드X",
+                    "name": "[꿈비] 트리플 원피스 베이비룸 세트 252X400 20P",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "20P",
+                    "boxRecommended": "10P B박스 사용",
+                    "components": [{"name": "730 가드","qty": 8},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 16},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 11},{"name": "5M 고정밴드","qty": 1},{"name": "미끄럼 방지 패드","qty": 56}]
+          },
+          {
+                    "id": "item-1780388702677",
+                    "type": "babyroom",
+                    "code": "코드X",
+                    "name": "트리플 원피스 베이비룸 세트 323X400 22P",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "20P",
+                    "boxRecommended": "10P A박스 사용",
+                    "components": [{"name": "640 가드","qty": 10}]
+          },
+          {
+                    "id": "item-1780388835437",
+                    "type": "babyroom",
+                    "code": "코드X",
+                    "name": "트리플 원피스 베이비룸 세트 323X400 22P",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "20P",
+                    "boxRecommended": "12P B박스 사용",
+                    "components": [{"name": "730 가드","qty": 10},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 18},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 10},{"name": "5M 고정밴드","qty": 4},{"name": "미끄럼 방지 패드","qty": 62}]
+          },
+          {
+                    "id": "item-1780530594480",
+                    "type": "babyroom",
+                    "code": "8800260085913",
+                    "name": "트윈스타 플러스 매트 210x180 (패밀리)_크림화이트",
+                    "zone": "1N",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "12P",
+                    "boxRecommended": "12P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 6},{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 8},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 32}]
+          },
+          {
+                    "id": "item-1780530701568",
+                    "type": "babyroom",
+                    "code": "8800257940546",
+                    "name": "[꿈비] 럭키스타 특대형 전용 하이가드 베이비룸 10p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "10P",
+                    "boxRecommended": "10P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 4},{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 6},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 26}]
+          },
+          {
+                    "id": "item-1780530791240",
+                    "type": "babyroom",
+                    "code": "8800257941901",
+                    "name": "[꿈비] 월드스타 특대형 전용 하이가드 베이비룸 10p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "10P",
+                    "boxRecommended": "10P 박스 사용",
+                    "components": [{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 4},{"name": "일자 커넥터","qty": 6},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 26}]
+          },
+          {
+                    "id": "item-1780530879720",
+                    "type": "babyroom",
+                    "code": "8800257942007",
+                    "name": "[꿈비] 트윈스타 슈퍼특대형 전용 하이가드 베이비룸 14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 6},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 6},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780530976047",
+                    "type": "babyroom",
+                    "code": "8800257942014",
+                    "name": "[꿈비] 트윈스타 자이언트특대형 전용 하이가드 베이비룸 14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 4},{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 6},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780531117696",
+                    "type": "babyroom",
+                    "code": "8809527903205",
+                    "name": "[꿈비] 하이가드 범퍼침대 베이비룸 8p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "10P",
+                    "boxRecommended": "8P 박스 사용",
+                    "components": [{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 4},{"name": "일자 커넥터","qty": 4},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 20}]
+          },
+          {
+                    "id": "item-1780532133711",
+                    "type": "babyroom",
+                    "code": "8809527903564",
+                    "name": "[꿈비] 하이가드 범퍼침대 베이비룸 10p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "10P",
+                    "boxRecommended": "10P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 5},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 6},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 26}]
+          },
+          {
+                    "id": "item-1780532197599",
+                    "type": "babyroom",
+                    "code": "8809527903199",
+                    "name": "[꿈비] 하이가드 범퍼침대 베이비룸 12p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "12P",
+                    "boxRecommended": "12P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 4},{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 8},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 32}]
+          },
+          {
+                    "id": "item-1780532265782",
+                    "type": "babyroom",
+                    "code": "8800280934550",
+                    "name": "[꿈비] 하이가드 범퍼침대 베이비룸 12p 슈퍼특대형 오픈형",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "12P",
+                    "boxRecommended": "12P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 4},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 4},{"name": "일자 커넥터","qty": 8},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 32}]
+          },
+          {
+                    "id": "item-1780532709766",
+                    "type": "babyroom",
+                    "code": "코드X",
+                    "name": "[꿈비] 하이가드 범퍼침대 베이비룸 16p 슈퍼특대형 실속형",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P A박스 사용",
+                    "components": [{"name": "640 가드","qty": 8}]
+          },
+          {
+                    "id": "item-1780532812174",
+                    "type": "babyroom",
+                    "code": "코드X",
+                    "name": "[꿈비] 하이가드 범퍼침대 베이비룸 16p 슈퍼특대형 실속형",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "16P",
+                    "boxRecommended": "8P B박스 사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "750 가드","qty": 5},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 12},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 1},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 44}]
+          },
+          {
+                    "id": "item-1780532911486",
+                    "type": "babyroom",
+                    "code": "8800257942373",
+                    "name": "[꿈비] 하이가드 베이비룸 Q 사이즈 매트용 아이보리 10p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "10P",
+                    "boxRecommended": "10P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 2},{"name": "일자 커넥터","qty": 6},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 26}]
+          },
+          {
+                    "id": "item-1780532976542",
+                    "type": "babyroom",
+                    "code": "8800257942403",
+                    "name": "[꿈비] 하이가드 베이비룸 SS+SS 사이즈 매트용 아이보리 12p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "12P",
+                    "boxRecommended": "12P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 2},{"name": "일자 커넥터","qty": 8},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 32}]
+          },
+          {
+                    "id": "item-1780533038686",
+                    "type": "babyroom",
+                    "code": "8800257942397",
+                    "name": "[꿈비] 하이가드 베이비룸 SS+Q 사이즈 매트용 아이보리 14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 6},{"name": "730 가드","qty": 6},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780533132422",
+                    "type": "babyroom",
+                    "code": "8800257942380",
+                    "name": "[꿈비] 하이가드 베이비룸 Q+Q 사이즈 매트용 아이보리 14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "730 가드","qty": 6},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 4},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780533207678",
+                    "type": "babyroom",
+                    "code": "8809527902932",
+                    "name": "[소브] 하이가드 베리2단 베이비룸 200x140 아이보리_10p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "10P",
+                    "boxRecommended": "10P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "730 가드","qty": 4},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 6},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 26}]
+          },
+          {
+                    "id": "item-1780533272741",
+                    "type": "babyroom",
+                    "code": "8809527902949",
+                    "name": "[소브] 하이가드 베리2단 베이비룸 240x140 아이보리_10p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "10P",
+                    "boxRecommended": "10P 박스 사용",
+                    "components": [{"name": "730 가드","qty": 2},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 6},{"name": "일자 커넥터","qty": 6},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 2},{"name": "미끄럼 방지 패드","qty": 26}]
+          },
+          {
+                    "id": "item-1780533380430",
+                    "type": "babyroom",
+                    "code": "8809527903533",
+                    "name": "[꿈비x소브] 하이가드 베이비룸 240x280 아이보리_14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "730 가드","qty": 6},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 6},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 5},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780533471893",
+                    "type": "babyroom",
+                    "code": "8809527902956",
+                    "name": "[소브] 하이가드 제로빅 베이비룸 300x140 아이보리_12p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "12P",
+                    "boxRecommended": "12P 박스 사용",
+                    "components": [{"name": "730 가드","qty": 6},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 4},{"name": "일자 커넥터","qty": 8},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 32}]
+          },
+          {
+                    "id": "item-1780533540709",
+                    "type": "babyroom",
+                    "code": "8809527902963",
+                    "name": "[소브] 하이가드 제로빅 베이비룸 260x200 아이보리_14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 6},{"name": "730 가드","qty": 6},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780533610878",
+                    "type": "babyroom",
+                    "code": "8809527902970",
+                    "name": "[꿈비x소브] 하이가드 베이비룸 300x200 아이보리_14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "640 가드","qty": 2},{"name": "730 가드","qty": 6},{"name": "750 가드","qty": 1},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 4},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "5M 고정밴드","qty": 3},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780533681853",
+                    "type": "babyroom",
+                    "code": "8809527903502",
+                    "name": "[꿈비x소브] 하이가드 베이비룸 220x280 아이보리_14p",
+                    "zone": "HW",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "babyroomSize": "14P",
+                    "boxRecommended": "14P 박스 사용",
+                    "components": [{"name": "730 가드","qty": 8},{"name": "750 가드","qty": 3},{"name": "750 도어","qty": 1},{"name": "840 가드","qty": 2},{"name": "일자 커넥터","qty": 10},{"name": "코너 커넥터","qty": 4},{"name": "3.5M 고정밴드","qty": 4},{"name": "5M 고정밴드","qty": 1},{"name": "미끄럼 방지 패드","qty": 38}]
+          },
+          {
+                    "id": "item-1780533791478",
+                    "type": "tpu-mat",
+                    "code": "8800280939661",
+                    "name": "[리코코] 디자인 TPU 클립매트 60x60x2.5cm 모던 민트 센터형",
+                    "zone": "1N",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "14P 박스",
+                    "accessories": [{"name": "전용 고정 클립","qty": 12}]
+          },
+          {
+                    "id": "item-1780533821286",
+                    "type": "tpu-mat",
+                    "code": "8800280939654",
+                    "name": "[리코코] 디자인 TPU 클립매트 60x60x2.5cm 모던 민트 사이드형",
+                    "zone": "1N",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "14P 박스",
+                    "accessories": [{"name": "전용 고정 클립","qty": 9}]
+          },
+          {
+                    "id": "item-1780533843661",
+                    "type": "tpu-mat",
+                    "code": "8800280939678",
+                    "name": "[리코코] 디자인 TPU 클립매트 60x60x2.5cm 모던 민트 코너형",
+                    "zone": "1N",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "14P 박스",
+                    "accessories": [{"name": "전용 고정 클립","qty": 6}]
+          },
+          {
+                    "id": "item-1780533893229",
+                    "type": "tpu-mat",
+                    "code": "8800368450088",
+                    "name": "[리코코] 디자인 TPU 클립매트 60x60x2.5cm 클라우드 사이드형",
+                    "zone": "1N",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": [{"name": "전용 고정 클립","qty": 6}]
+          },
+          {
+                    "id": "item-1780533918814",
+                    "type": "tpu-mat",
+                    "code": "8800368450071",
+                    "name": "[리코코] 디자인 TPU 클립매트 60x60x2.5cm 클라우드 센터형",
+                    "zone": "1N",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": [{"name": "전용 고정 클립","qty": 12}]
+          },
+          {
+                    "id": "item-1780533948718",
+                    "type": "tpu-mat",
+                    "code": "8800368450064",
+                    "name": "[리코코] 디자인 TPU 클립매트 60x60x2.5cm 클라우드 코너형",
+                    "zone": "1N",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": [{"name": "전용 고정 클립","qty": 9}]
+          },
+          {
+                    "id": "item-1780534012525",
+                    "type": "tpu-mat",
+                    "code": "8800280931078",
+                    "name": "[리코코] N자이언트 TPU 퍼즐매트 사이드형 1P 크림",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 1,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534038109",
+                    "type": "tpu-mat",
+                    "code": "8800280931061",
+                    "name": "[리코코] N자이언트 TPU 퍼즐매트 센터형 1P 크림",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534058613",
+                    "type": "tpu-mat",
+                    "code": "8800280931085",
+                    "name": "[리코코] N자이언트 TPU 퍼즐매트 코너형 1P 크림",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534265653",
+                    "type": "tpu-mat",
+                    "code": "8800257943653",
+                    "name": "[리코코] TPU 셀프시공 퍼즐매트 사이드형 1p 크림베이지",
+                    "zone": "2F",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 12,"maxQty": 12,"boxThreshold": 12,"boxSmallName": "12P 박스","boxLargeName": "12P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534296109",
+                    "type": "tpu-mat",
+                    "code": "8800257943691",
+                    "name": "[리코코] TPU 셀프시공 퍼즐매트 센터형 1p 크림베이지",
+                    "zone": "2F",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 12,"maxQty": 12,"boxThreshold": 12,"boxSmallName": "12P 박스","boxLargeName": "12P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534321253",
+                    "type": "tpu-mat",
+                    "code": "8800257943721",
+                    "name": "[리코코] TPU 셀프시공 퍼즐매트 코너형 1p 크림베이지",
+                    "zone": "2F",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 12,"maxQty": 12,"boxThreshold": 12,"boxSmallName": "12P 박스","boxLargeName": "12P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534369397",
+                    "type": "tpu-mat",
+                    "code": "8800257943745",
+                    "name": "[리코코] TPU 와플 퍼즐매트 50x50x1.0cm 크림베이지",
+                    "zone": "2G",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 25,"maxQty": 25,"boxThreshold": 25,"boxSmallName": "25P 박스","boxLargeName": "25P 박스",
+                    "accessories": [{"name": "[리코코] TPU 와플 퍼즐매트 십자 커넥터","qty": 0}]
+          },
+          {
+                    "id": "item-1780534417957",
+                    "type": "tpu-mat",
+                    "code": "8800257943776",
+                    "name": "[리코코] TPU 워터가드 퍼즐매트 사이드형 1p 크림베이지",
+                    "zone": "2C",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 10,"maxQty": 10,"boxThreshold": 10,"boxSmallName": "10P 박스","boxLargeName": "10P 박스",
+                    "accessories": [{"name": "[리코코] TPU 워터가드 퍼즐매트 십자클립 1p","qty": 0}]
+          },
+          {
+                    "id": "item-1780534444590",
+                    "type": "tpu-mat",
+                    "code": "8800257943790",
+                    "name": "[리코코] TPU 워터가드 퍼즐매트 센터형 1p 크림베이지",
+                    "zone": "2C",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 10,"maxQty": 10,"boxThreshold": 10,"boxSmallName": "10P 소형박스","boxLargeName": "10P 박스",
+                    "accessories": [{"name": "[리코코] TPU 워터가드 퍼즐매트 십자클립 1p","qty": 0}]
+          },
+          {
+                    "id": "item-1780534476197",
+                    "type": "tpu-mat",
+                    "code": "8800257943820",
+                    "name": "[리코코] TPU 워터가드 퍼즐매트 코너형 1p 크림베이지",
+                    "zone": "2C",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 10,"maxQty": 10,"boxThreshold": 10,"boxSmallName": "10P 박스","boxLargeName": "10P 박스",
+                    "accessories": [{"name": "[리코코] TPU 워터가드 퍼즐매트 십자클립 1p","qty": 0}]
+          },
+          {
+                    "id": "item-1780534601189",
+                    "type": "tpu-mat",
+                    "code": "8800280931115",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 사이드형 1P 60x60x2cm 그라운드",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 14,"maxQty": 14,"boxThreshold": 14,"boxSmallName": "14P 박스","boxLargeName": "14P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534665757",
+                    "type": "tpu-mat",
+                    "code": "8800280931122",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 센터형 1P 60x60x2cm 그라운드",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 14,"maxQty": 14,"boxThreshold": 14,"boxSmallName": "14P 박스","boxLargeName": "14P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534695437",
+                    "type": "tpu-mat",
+                    "code": "8800280931108",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 코너형 1P 60x60x2cm 그라운드",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 14,"maxQty": 14,"boxThreshold": 14,"boxSmallName": "14P 박스","boxLargeName": "14P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534725277",
+                    "type": "tpu-mat",
+                    "code": "8800280931146",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 사이드형 1P 60x60x2cm 페일스톤",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 14,"maxQty": 14,"boxThreshold": 14,"boxSmallName": "14P 박스","boxLargeName": "14P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534749724",
+                    "type": "tpu-mat",
+                    "code": "8800280931153",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 센터형 1P 60x60x2cm 페일스톤",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 14,"maxQty": 14,"boxThreshold": 14,"boxSmallName": "14P 박스","boxLargeName": "14P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534772709",
+                    "type": "tpu-mat",
+                    "code": "8800280931139",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 코너형 1P 60x60x2cm 페일스톤",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 14,"maxQty": 14,"boxThreshold": 14,"boxSmallName": "14P 박스","boxLargeName": "14P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534837061",
+                    "type": "tpu-mat",
+                    "code": "8800280935007",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 60x60x2.5cm 그라운드_사이드형 1P",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534860613",
+                    "type": "tpu-mat",
+                    "code": "8800280934994",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 60x60x2.5cm 페일스톤_센터형 1P",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534915708",
+                    "type": "tpu-mat",
+                    "code": "8800280935014",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 60x60x2.5cm 그라운드_센터형 1P",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780534938221",
+                    "type": "tpu-mat",
+                    "code": "8800280934994",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 60x60x2.5cm 페일스톤_사이드형 1P",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535013253",
+                    "type": "tpu-mat",
+                    "code": "8800280934994",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 60x60x2.5cm 그라운드_코너형 1P",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535044828",
+                    "type": "tpu-mat",
+                    "code": "8800280935045",
+                    "name": "[리코코] 황변방지 TPU 퍼즐매트 60x60x2.5cm 페일스톤_코너형 1P",
+                    "zone": "1Q",
+                    "warning": "기본 포장 시 부자재 겹치지 않도록 밀착 검수 요망",
+                    "defaultQty": 6,"maxQty": 6,"boxThreshold": 2,"boxSmallName": "2P 박스","boxLargeName": "6P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535411180",
+                    "type": "tpu-mat",
+                    "code": "8809527909368",
+                    "name": "[꿈비] 끼임방지 침대가드 200cm 라이트그레이",
+                    "zone": "1R",
+                    "warning": "- 한 박스 내입수량 2개 참고하여 출고\n- 고정밴드 1P 및 코너커넥터 2P(1set) 합포 수량 참고하여 출고",
+                    "defaultQty": 2,"maxQty": 2,"boxThreshold": 1,"boxSmallName": "1P 박스","boxLargeName": "2P 박스",
+                    "accessories": [{"name": "침대가드 고정밴드 1P","qty": 0},{"name": "침대가드 코너커넥터","qty": 0}]
+          },
+          {
+                    "id": "item-1780535466932",
+                    "type": "tpu-mat",
+                    "code": "8809527909351",
+                    "name": "[꿈비] 끼임방지 침대가드 180cm 라이트그레이",
+                    "zone": "1R",
+                    "warning": "- 한 박스 내입수량 2개 참고하여 출고\n- 고정밴드 1P 및 코너커넥터 2P(1set) 합포 수량 참고하여 출고",
+                    "defaultQty": 2,"maxQty": 2,"boxThreshold": 1,"boxSmallName": "1P 박스","boxLargeName": "2P 박스",
+                    "accessories": [{"name": "고정밴드 1P","qty": 0},{"name": "코너커넥터 2P(1set)","qty": 0}]
+          },
+          {
+                    "id": "item-1780535511133",
+                    "type": "tpu-mat",
+                    "code": "8809527909344",
+                    "name": "[꿈비] 끼임방지 침대가드 165cm 라이트그레이",
+                    "zone": "1Q",
+                    "warning": "- 한 박스 내입수량 2개 참고하여 출고\n- 고정밴드 1P 및 코너커넥터 2P(1set) 합포 수량 참고하여 출고",
+                    "defaultQty": 2,"maxQty": 2,"boxThreshold": 1,"boxSmallName": "1P 박스","boxLargeName": "2P 박스",
+                    "accessories": [{"name": "고정밴드 1P","qty": 0},{"name": "코너커넥터 2P(1set)","qty": 0}]
+          },
+          {
+                    "id": "item-1780535556948",
+                    "type": "tpu-mat",
+                    "code": "8809527909337",
+                    "name": "[꿈비] 끼임방지 침대가드 150cm 라이트그레이",
+                    "zone": "1R",
+                    "warning": "- 한 박스 내입수량 2개 참고하여 출고\n- 고정밴드 1P 및 코너커넥터 2P(1set) 합포 수량 참고하여 출고",
+                    "defaultQty": 2,"maxQty": 2,"boxThreshold": 1,"boxSmallName": "1P 박스","boxLargeName": "2P 박스",
+                    "accessories": [{"name": "고정밴드 1P","qty": 0},{"name": "코너커넥터 2P(1set)","qty": 0}]
+          },
+          {
+                    "id": "item-1780535603588",
+                    "type": "tpu-mat",
+                    "code": "8809527909320",
+                    "name": "[꿈비] 끼임방지 침대가드 110cm 라이트그레이",
+                    "zone": "1R",
+                    "warning": "- 한 박스 내입수량 2개 참고하여 출고\n- 고정밴드 1P 및 코너커넥터 2P(1set) 합포 수량 참고하여 출고",
+                    "defaultQty": 2,"maxQty": 2,"boxThreshold": 1,"boxSmallName": "1P 박스","boxLargeName": "2P 박스",
+                    "accessories": [{"name": "고정밴드 1P","qty": 0},{"name": "코너커넥터 2P(1set)","qty": 0}]
+          },
+          {
+                    "id": "item-1780535741244",
+                    "type": "tpu-mat",
+                    "code": "8800257946081",
+                    "name": "[파미야] 셀프시공 카페트 매트 50X50_그레이_1P",
+                    "zone": "1H",
+                    "warning": "-12개 이하 출고 시 12P 박스 사용",
+                    "defaultQty": 24,"maxQty": 24,"boxThreshold": 12,"boxSmallName": "12P 소형박스","boxLargeName": "24P 대형박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535777892",
+                    "type": "tpu-mat",
+                    "code": "8800257946098",
+                    "name": "[파미야] 셀프시공 카페트 매트 50X50_딥그린_1P",
+                    "zone": "1H",
+                    "warning": "-12개 이하 출고 시 12P 박스 사용",
+                    "defaultQty": 24,"maxQty": 24,"boxThreshold": 12,"boxSmallName": "12P 소형박스","boxLargeName": "24P 대형박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535803652",
+                    "type": "tpu-mat",
+                    "code": "8800257946104",
+                    "name": "[파미야] 셀프시공 카페트 매트 50X50_딥블루_1P",
+                    "zone": "1H",
+                    "warning": "-12개 이하 출고 시 12P 박스 사용",
+                    "defaultQty": 24,"maxQty": 24,"boxThreshold": 12,"boxSmallName": "12P 소형박스","boxLargeName": "24P 대형박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535838252",
+                    "type": "tpu-mat",
+                    "code": "8800257946128",
+                    "name": "[파미야] 셀프시공 카페트 매트 50X50_베이지_1P",
+                    "zone": "1H",
+                    "warning": "-12개 이하 출고 시 12P 박스 사용",
+                    "defaultQty": 24,"maxQty": 24,"boxThreshold": 12,"boxSmallName": "12P 소형박스","boxLargeName": "24P 대형박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535862837",
+                    "type": "tpu-mat",
+                    "code": "8800257946135",
+                    "name": "[파미야] 셀프시공 카페트 매트 50X50_브라운_1P",
+                    "zone": "1H",
+                    "warning": "-12개 이하 출고 시 12P 박스 사용",
+                    "defaultQty": 24,"maxQty": 24,"boxThreshold": 12,"boxSmallName": "12P 소형박스","boxLargeName": "24P 대형박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535893333",
+                    "type": "tpu-mat",
+                    "code": "8800257946142",
+                    "name": "[파미야] 셀프시공 카페트 매트 50X50_블루그레이_1P",
+                    "zone": "1H",
+                    "warning": "-12개 이하 출고 시 12P 박스 사용",
+                    "defaultQty": 24,"maxQty": 24,"boxThreshold": 12,"boxSmallName": "12P 소형박스","boxLargeName": "24P 대형박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535917652",
+                    "type": "tpu-mat",
+                    "code": "8800257946159",
+                    "name": "[파미야] 셀프시공 카페트 매트 50X50_아이보리_1P",
+                    "zone": "1H",
+                    "warning": "-12개 이하 출고 시 12P 박스 사용",
+                    "defaultQty": 24,"maxQty": 24,"boxThreshold": 12,"boxSmallName": "12P 소형박스","boxLargeName": "24P 대형박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535941181",
+                    "type": "tpu-mat",
+                    "code": "8800257946166",
+                    "name": "[파미야] 셀프시공 카페트 매트 50X50_코퍼_1P",
+                    "zone": "1H",
+                    "warning": "-12개 이하 출고 시 12P 박스 사용",
+                    "defaultQty": 24,"maxQty": 24,"boxThreshold": 12,"boxSmallName": "12P 소형박스","boxLargeName": "24P 대형박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780535965700",
+                    "type": "tpu-mat",
+                    "code": "8800257946173",
+                    "name": "[파미야] 셀프시공 카페트 매트 50X50_크림_1P",
+                    "zone": "1H",
+                    "warning": "-12개 이하 출고 시 12P 박스 사용",
+                    "defaultQty": 24,"maxQty": 24,"boxThreshold": 12,"boxSmallName": "12P 소형박스","boxLargeName": "24P 대형박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780536023124",
+                    "type": "tpu-mat",
+                    "code": "8800257946180",
+                    "name": "[파미야] 셀프시공 카페트 매트 60X60_베이지_1P",
+                    "zone": "1H",
+                    "warning": "- 수량 확인 후 출고",
+                    "defaultQty": 12,"maxQty": 12,"boxThreshold": 12,"boxSmallName": "12P 박스","boxLargeName": "12P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780536068404",
+                    "type": "tpu-mat",
+                    "code": "8800257946197",
+                    "name": "[파미야] 셀프시공 카페트 매트 60X60_아이보리_1P",
+                    "zone": "1H",
+                    "warning": "- 수량 확인 후 출고",
+                    "defaultQty": 12,"maxQty": 12,"boxThreshold": 12,"boxSmallName": "12P 박스","boxLargeName": "12P 박스",
+                    "accessories": []
+          },
+          {
+                    "id": "item-1780536092868",
+                    "type": "tpu-mat",
+                    "code": "8800257946203",
+                    "name": "[파미야] 셀프시공 카페트 매트 60X60_크림_1P",
+                    "zone": "1H",
+                    "warning": "- 수량 확인 후 출고",
+                    "defaultQty": 12,"maxQty": 12,"boxThreshold": 12,"boxSmallName": "12P 박스","boxLargeName": "12P 박스",
+                    "accessories": []
+          }
+    ];
+    /* DATA_PLACEHOLDER_END */
+
+    // ★ 그룹 데이터베이스
+    const initialGroupsDb = [];
+
+    let productsDb = [];
+    let groupsDb = [];
+    let currentActiveProductId = "licoco-corner";
+    let simMatQty = 6;
+    let tempTpuAccessories = [];
+    let tempBabyroomComponents = [];
+    let lobbyEditMode = false;
+    let editSelectedIds = new Set();
+
+    // =============================================
+    // 데이터 로드/저장
+    // =============================================
+    function loadProductsData() {
+        const savedVersion = localStorage.getItem('GGUMBI_CLIENT_VERSION');
+        const savedData = localStorage.getItem('GGUMBI_PRODUCTS_DB_DYNAMIC');
+        if (savedVersion !== CLIENT_VERSION || !savedData) {
+            productsDb = JSON.parse(JSON.stringify(initialProductsDb));
+            localStorage.setItem('GGUMBI_PRODUCTS_DB_DYNAMIC', JSON.stringify(productsDb));
+            localStorage.setItem('GGUMBI_CLIENT_VERSION', CLIENT_VERSION);
+        } else {
+            productsDb = JSON.parse(savedData);
+        }
+        const savedGroups = localStorage.getItem('GGUMBI_GROUPS_DB');
+        groupsDb = savedGroups ? JSON.parse(savedGroups) : JSON.parse(JSON.stringify(initialGroupsDb));
+    }
+
+    function saveProductsData() {
+        localStorage.setItem('GGUMBI_PRODUCTS_DB_DYNAMIC', JSON.stringify(productsDb));
+    }
+
+    function saveGroupsData() {
+        localStorage.setItem('GGUMBI_GROUPS_DB', JSON.stringify(groupsDb));
+    }
+
+    // =============================================
+    // HTML 다운로드
+    // =============================================
+    async function downloadUpdatedHtml() {
+        try {
+            showToast("⏳ 배포용 단일 웹파일 패키징 분석 중...", "info");
+            const response = await fetch(window.location.href.split('?')[0]);
+            let htmlText = await response.text();
+            const startMarker = "/* DATA_PLACEHOLDER_START */";
+            const endMarker = "/* DATA_PLACEHOLDER_END */";
+            const startIndex = htmlText.indexOf(startMarker);
+            const endIndex = htmlText.indexOf(endMarker);
+            if (startIndex === -1 || endIndex === -1) {
+                showToast("❌ 배포 마커가 소실되었습니다.", "warning"); return;
             }
-        }
-
-        function saveProductsData() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(productsDb));
-        }
-
-        function loadCategoryData() {
-            const stored = localStorage.getItem(CATEGORY_STORAGE_KEY);
-            if (stored) {
-                try {
-                    const categories = JSON.parse(stored);
-                    productsDb.forEach(product => {
-                        const cat = categories.find(c => c.id === product.id);
-                        if (cat) {
-                            product.category = cat.category;
-                            product.warningColor = cat.warningColor || '#000000';
-                        }
-                    });
-                } catch (e) {
-                    console.log('카테고리 데이터 로드 실패');
+            const updatedDbString = "\n    const initialProductsDb = " + JSON.stringify(productsDb, null, 6) + ";\n    ";
+            let newHtml = htmlText.substring(0, startIndex + startMarker.length) + updatedDbString + htmlText.substring(endIndex);
+            const versionMarker = 'const CLIENT_VERSION = "';
+            const versionIndex = newHtml.indexOf(versionMarker);
+            if (versionIndex !== -1) {
+                const nextQuoteIndex = newHtml.indexOf('";', versionIndex + versionMarker.length);
+                if (nextQuoteIndex !== -1) {
+                    newHtml = newHtml.substring(0, versionIndex + versionMarker.length) + Date.now() + newHtml.substring(nextQuoteIndex);
                 }
             }
+            const blob = new Blob([newHtml], { type: "text/html;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "index.html";
+            link.click();
+            showToast("💾 index.html 다운로드 완료!", "success");
+        } catch (err) {
+            showToast("❌ 웹파일 생성 실패.", "warning");
         }
+    }
 
-        function saveCategoryData() {
-            const categories = productsDb.map(p => ({
-                id: p.id,
-                category: p.category || 'uncategorized',
-                warningColor: p.warningColor || '#000000'
-            }));
-            localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(categories));
+    // =============================================
+    // ★ NEW: 그룹 편집 모드
+    // =============================================
+    function toggleLobbyEditMode() {
+        lobbyEditMode = !lobbyEditMode;
+        editSelectedIds.clear();
+        const toolbar = document.getElementById('lobby-edit-toolbar');
+        const btn = document.getElementById('lobby-edit-btn');
+        if (lobbyEditMode) {
+            toolbar.classList.remove('hidden');
+            btn.classList.add('bg-brand-500', 'text-white');
+            btn.classList.remove('bg-white', 'text-brand-700');
+        } else {
+            toolbar.classList.add('hidden');
+            btn.classList.remove('bg-brand-500', 'text-white');
+            btn.classList.add('bg-white', 'text-brand-700');
+            document.getElementById('group-name-input').value = '';
         }
+        renderLobbyProducts();
+    }
 
-        // ===== 기본 제품 초기화 =====
-        function initializeDefaultProducts() {
-            productsDb = [
-                {
-                    id: "licoco-corner",
-                    type: "tpu",
-                    code: "LM-001",
-                    name: "꿈비 TPU 베이스 (코너매트)",
-                    zone: "A-1",
-                    warning: "• TPU 매트는 고온에서 변형될 수 있으므로 냉장 보관하세요.\n• 패킹 시 접히지 않도록 주의하세요.",
-                    defaultQty: 6,
-                    maxQty: 12,
-                    boxThreshold: 2,
-                    boxSmallName: "소형 박스 (20x20x10cm)",
-                    boxLargeName: "대형 박스 (40x40x15cm)",
-                    accessories: [
-                        { name: "에어캡", qty: 1 },
-                        { name: "지퍼백", qty: 2 },
-                        { name: "라벨 스티커", qty: 1 }
-                    ],
-                    category: "tpu",
-                    warningColor: "#000000"
-                },
-                {
-                    id: "babyroom-120",
-                    type: "babyroom",
-                    code: "BR-001",
-                    name: "꿈비 베이비룸 120x80",
-                    zone: "B-2",
-                    warning: "• 베이비룸은 조립 후 바로 배송하지 마세요.\n• 포장지로 충분히 감싸서 보호하세요.",
-                    babyroomSize: "120 x 80 cm",
-                    boxRecommended: "120x80 전용 박스",
-                    components: [
-                        { name: "매트", qty: 1 },
-                        { name: "울타리 프레임", qty: 4 },
-                        { name: "문짝", qty: 1 },
-                        { name: "설명서", qty: 1 }
-                    ],
-                    category: "babyroom",
-                    warningColor: "#000000"
-                }
-            ];
-            saveProductsData();
+    function toggleEditSelect(id) {
+        if (editSelectedIds.has(id)) {
+            editSelectedIds.delete(id);
+        } else {
+            editSelectedIds.add(id);
         }
+        document.getElementById('edit-selected-count').innerText = `선택된 제품: ${editSelectedIds.size}개`;
+        // 체크박스 UI 동기화
+        productsDb.forEach(p => {
+            const cb = document.getElementById('editcb-' + p.id);
+            if (cb) cb.checked = editSelectedIds.has(p.id);
+        });
+    }
 
-        // ===== 렌더링 함수 =====
-        function renderLobbyProducts() {
-            const container = document.getElementById('product-list-container');
-            const categoryContainer = document.getElementById('products-by-category');
-            
-            if (!categoryEditMode) {
-                container.innerHTML = '';
-                categoryContainer.innerHTML = '';
-                
-                // 카테고리별로 그룹핑
-                const categories = ['tpu', 'babyroom', 'uncategorized'];
-                const categoryNames = {
-                    'tpu': 'TPU 매트',
-                    'babyroom': '베이비룸',
-                    'uncategorized': '분류 없음'
-                };
-                const categoryStyles = {
-                    'tpu': 'category-tpu',
-                    'babyroom': 'category-babyroom',
-                    'uncategorized': 'category-uncategorized'
-                };
+    function selectAllInEditMode() {
+        productsDb.forEach(p => editSelectedIds.add(p.id));
+        document.getElementById('edit-selected-count').innerText = `선택된 제품: ${editSelectedIds.size}개`;
+        renderLobbyProducts();
+    }
 
-                categories.forEach(cat => {
-                    const filtered = productsDb.filter(p => (p.category || 'uncategorized') === cat);
-                    
-                    if (filtered.length > 0) {
-                        let html = `<div class="${categoryStyles[cat]} rounded-xl p-3.5 space-y-2.5">
-                            <h3 class="text-xs font-black text-brand-900">📂 ${categoryNames[cat]}</h3>`;
-                        
-                        filtered.forEach(product => {
-                            html += renderProductCard(product);
-                        });
-                        
-                        html += '</div>';
-                        categoryContainer.innerHTML += html;
-                    }
-                });
-            }
+    function deselectAllInEditMode() {
+        editSelectedIds.clear();
+        document.getElementById('edit-selected-count').innerText = `선택된 제품: 0개`;
+        renderLobbyProducts();
+    }
+
+    function saveNewGroup() {
+        const name = document.getElementById('group-name-input').value.trim();
+        if (!name) { showToast("⚠️ 그룹 이름을 입력해 주세요.", "warning"); return; }
+        if (editSelectedIds.size === 0) { showToast("⚠️ 그룹에 넣을 제품을 먼저 선택해 주세요.", "warning"); return; }
+        const existing = groupsDb.find(g => g.name === name);
+        if (existing) {
+            editSelectedIds.forEach(id => {
+                if (!existing.productIds.includes(id)) existing.productIds.push(id);
+            });
+        } else {
+            groupsDb.push({ id: 'grp-' + Date.now(), name: name, productIds: Array.from(editSelectedIds), collapsed: false });
         }
+        saveGroupsData();
+        toggleLobbyEditMode();
+        showToast(`✅ 그룹 "${name}" 저장 완료!`, "success");
+    }
 
-        function renderProductCard(product) {
-            const iconMap = { 'tpu': 'fa-database', 'babyroom': 'fa-child' };
-            const icon = iconMap[product.type] || 'fa-box';
+    function deleteGroup(groupId, e) {
+        e.stopPropagation();
+        if (!confirm("이 그룹을 삭제하시겠습니까? (제품 데이터는 유지됩니다)")) return;
+        groupsDb = groupsDb.filter(g => g.id !== groupId);
+        saveGroupsData();
+        renderLobbyProducts();
+        showToast("🗑️ 그룹이 삭제되었습니다.", "warning");
+    }
 
-            return `
-                <div onclick="openProductManual('${product.id}')" class="bg-white rounded-lg p-3.5 border border-brand-200/60 hover:border-brand-400 hover:shadow-md transition-all cursor-pointer">
-                    <div class="flex items-start justify-between gap-2">
-                        <div class="flex-grow min-w-0">
-                            <h3 class="text-xs font-bold text-brand-900 truncate"><i class="fa-solid ${icon} text-brand-500 mr-1.5"></i>${product.name}</h3>
-                            <p class="text-[9px] text-brand-700 font-mono mt-1">${product.code}</p>
+    function toggleGroupCollapse(groupId) {
+        const g = groupsDb.find(g => g.id === groupId);
+        if (g) { g.collapsed = !g.collapsed; saveGroupsData(); renderLobbyProducts(); }
+    }
+
+    // =============================================
+    // 로비 렌더링 (그룹 포함)
+    // =============================================
+    function renderLobbyProducts() {
+        const container = document.getElementById('product-list-container');
+        container.innerHTML = "";
+
+        // 그룹에 속한 제품 ID 집합
+        const groupedIds = new Set();
+        groupsDb.forEach(g => g.productIds.forEach(id => groupedIds.add(id)));
+
+        // 그룹 렌더링
+        groupsDb.forEach(grp => {
+            const grpProducts = grp.productIds.map(id => productsDb.find(p => p.id === id)).filter(Boolean);
+            if (grpProducts.length === 0) return;
+
+            const grpHtml = `
+                <div class="rounded-2xl overflow-hidden border border-brand-200 ggumbi-shadow">
+                    <div class="group-header bg-brand-500 text-white px-4 py-3 flex items-center justify-between" onclick="toggleGroupCollapse('${grp.id}')">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-sm"></i>
+                            <span class="text-xs font-black">${grp.name}</span>
+                            <span class="text-[9px] bg-white/20 px-2 py-0.5 rounded-full font-bold">${grpProducts.length}개</span>
                         </div>
-                        <span class="text-[8px] font-bold bg-brand-100 text-brand-700 px-2 py-1 rounded whitespace-nowrap">${product.zone || '미지정'}</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="deleteGroup('${grp.id}', event)" class="text-white/70 hover:text-white text-[10px] bg-white/10 hover:bg-white/20 px-2 py-1 rounded-lg transition-all"><i class="fa-solid fa-trash-can"></i></button>
+                            <i class="fa-solid fa-chevron-${grp.collapsed ? 'down' : 'up'} text-[10px] transition-transform"></i>
+                        </div>
+                    </div>
+                    <div class="group-content ${grp.collapsed ? 'hidden' : ''} bg-white divide-y divide-brand-50 space-y-0">
+                        ${grpProducts.map(p => renderProductCardHtml(p, true)).join('')}
                     </div>
                 </div>
             `;
-        }
+            container.insertAdjacentHTML('beforeend', grpHtml);
+        });
 
-        // ===== 카테고리 관리 =====
-        function toggleCategoryEditMode() {
-            categoryEditMode = !categoryEditMode;
-            const panel = document.getElementById('category-edit-panel');
-            const icon = document.getElementById('category-toggle-icon');
-            const container = document.getElementById('category-product-selection');
-            
-            if (categoryEditMode) {
-                panel.classList.remove('hidden');
-                icon.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
-                renderCategoryProductSelection();
-            } else {
-                panel.classList.add('hidden');
-                icon.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
-                currentSelectedProducts.clear();
+        // 그룹 미소속 제품 렌더링
+        const ungrouped = productsDb.filter(p => !groupedIds.has(p.id));
+        if (ungrouped.length > 0) {
+            if (groupsDb.length > 0) {
+                container.insertAdjacentHTML('beforeend', `<div class="text-[10px] text-brand-700 font-extrabold uppercase tracking-wider pt-1 pb-1 px-1 flex items-center gap-1.5"><i class="fa-solid fa-list text-brand-400"></i> 미분류 제품</div>`);
             }
-        }
-
-        function renderCategoryProductSelection() {
-            const container = document.getElementById('category-product-selection');
-            let html = '';
-
-            productsDb.forEach(product => {
-                const isChecked = currentSelectedProducts.has(product.id) ? 'checked' : '';
-                html += `
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-brand-200 cursor-pointer hover:bg-brand-50 transition-colors">
-                        <input type="checkbox" value="${product.id}" ${isChecked} 
-                            onchange="handleProductSelection(this)" class="w-4 h-4 rounded">
-                        <span class="text-[10px] font-semibold text-brand-900 flex-1">${product.name}</span>
-                        <span class="text-[8px] text-brand-600">${product.code}</span>
-                    </label>
-                `;
+            ungrouped.forEach(p => {
+                container.insertAdjacentHTML('beforeend', renderProductCardHtml(p, false));
             });
-
-            container.innerHTML = html;
         }
+    }
 
-        function handleProductSelection(checkbox) {
-            if (checkbox.checked) {
-                currentSelectedProducts.add(checkbox.value);
-            } else {
-                currentSelectedProducts.delete(checkbox.value);
-            }
+    function renderProductCardHtml(p, insideGroup) {
+        const isBabyroom = p.type === "babyroom";
+        const specLabel = isBabyroom
+            ? `하이가드 단독형 (${p.babyroomSize || '10P'} 규격 세트)`
+            : `입수 기준: 매트 ${p.defaultQty}개 / 공박스 분기: ${p.boxThreshold}개 이하`;
+        const typeBadge = isBabyroom
+            ? `<span class="text-[8px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200">베이비룸 ${p.babyroomSize || '10P'}</span>`
+            : `<span class="text-[8px] font-bold bg-brand-100 text-brand-800 px-1.5 py-0.5 rounded border border-brand-200">TPU 매트</span>`;
+
+        const checkboxHtml = lobbyEditMode
+            ? `<input type="checkbox" id="editcb-${p.id}" class="edit-checkbox shrink-0 mr-2" ${editSelectedIds.has(p.id) ? 'checked' : ''} onclick="event.stopPropagation(); toggleEditSelect('${p.id}')">`
+            : '';
+
+        const wrapClass = insideGroup
+            ? "bg-white hover:bg-brand-50 px-4 py-3.5 transition-all duration-200 cursor-pointer flex items-center border-b border-brand-50 last:border-b-0"
+            : "bg-white hover:border-brand-500 border border-brand-100 p-4 rounded-2xl transition-all duration-200 cursor-pointer flex items-center ggumbi-shadow group";
+
+        return `
+            <div class="${wrapClass}" onclick="${lobbyEditMode ? `toggleEditSelect('${p.id}')` : `openProductManual('${p.id}')`}">
+                ${checkboxHtml}
+                <div class="flex-grow space-y-1 min-w-0">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="text-[9px] font-mono text-brand-800 bg-brand-100 px-2 py-0.5 rounded border border-brand-200 font-extrabold truncate max-w-[120px]">${p.code}</span>
+                        ${typeBadge}
+                    </div>
+                    <h3 class="text-xs font-black text-brand-900 leading-snug">${p.name}</h3>
+                    <p class="text-[10px] text-brand-700 font-semibold">${specLabel}</p>
+                </div>
+                ${!lobbyEditMode ? `
+                <div class="flex items-center gap-2 shrink-0 ml-2">
+                    <span class="text-[9px] text-brand-600 font-extrabold bg-brand-50 border border-brand-100 px-2 py-1 rounded">${p.zone}</span>
+                    <div class="bg-brand-100 p-2 rounded-xl text-brand-600 group-hover:bg-brand-300 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </div>
+                </div>` : `<span class="text-[9px] text-brand-600 font-bold bg-brand-50 border border-brand-100 px-2 py-1 rounded shrink-0 ml-2">${p.zone}</span>`}
+            </div>
+        `;
+    }
+
+    function filterProducts() {
+        const searchVal = document.getElementById('search-input').value.toLowerCase();
+        const container = document.getElementById('product-list-container');
+        container.innerHTML = "";
+        const filtered = productsDb.filter(p => p.name.toLowerCase().includes(searchVal) || p.code.toLowerCase().includes(searchVal));
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="text-center py-10 bg-white/50 rounded-2xl border border-white/60 text-xs text-brand-700 font-bold">일치하는 제품이 없습니다.</div>`;
+            return;
         }
+        filtered.forEach(p => { container.insertAdjacentHTML('beforeend', renderProductCardHtml(p, false)); });
+    }
 
-        function assignProductsCategory(categoryName) {
-            if (currentSelectedProducts.size === 0) {
-                showToast("❌ 먼저 제품을 선택해주세요.", "warning");
-                return;
-            }
+    // =============================================
+    // 제품 상세 페이지
+    // =============================================
+    function openProductManual(id) {
+        currentActiveProductId = id;
+        const p = productsDb.find(prod => prod.id === id);
+        if (!p) return;
+        document.getElementById('view-lobby').classList.add('hidden');
+        document.getElementById('view-detail').classList.remove('hidden');
+        document.getElementById('detail-product-code').innerText = p.code;
+        document.getElementById('detail-product-name').innerText = p.name;
+        document.getElementById('detail-product-zone').innerText = "랙 구역: " + p.zone;
+        document.getElementById('detail-product-warning').innerText = p.warning;
+        if (p.type === "babyroom") {
+            document.getElementById('simulator-tpu-mat').classList.add('hidden');
+            document.getElementById('simulator-babyroom').classList.remove('hidden');
+            updateBabyroomSimulation(p);
+        } else {
+            document.getElementById('simulator-tpu-mat').classList.remove('hidden');
+            document.getElementById('simulator-babyroom').classList.add('hidden');
+            document.getElementById('detail-max-limit-badge').innerText = `최대 ${p.maxQty || 12}개 한도`;
+            simMatQty = parseInt(p.defaultQty) || 6;
+            updateTpuSimulation(p);
+        }
+        updateAdminQrPanel(p.id);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
-            currentSelectedProducts.forEach(productId => {
-                const product = productsDb.find(p => p.id === productId);
-                if (product) {
-                    product.category = categoryName;
-                }
+    function goBackToLobby() {
+        document.getElementById('view-detail').classList.add('hidden');
+        document.getElementById('view-lobby').classList.remove('hidden');
+        renderLobbyProducts();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // =============================================
+    // TPU 시뮬레이션
+    // =============================================
+    function adjustSimQty(type, val) {
+        const p = productsDb.find(prod => prod.id === currentActiveProductId);
+        if (!p) return;
+        const limitMax = p.maxQty || 12;
+        if (type === 'mat') {
+            let temp = simMatQty + val;
+            if (temp < 1) { showToast("⚠️ 최소 1개 이상만 포장 가능합니다.", "warning"); return; }
+            if (temp > limitMax) { showToast(`⚠️ 최대 합포 한계 수량 ${limitMax}개입니다.`, "warning"); return; }
+            simMatQty = temp;
+        }
+        updateTpuSimulation(p);
+    }
+
+    function updateTpuSimulation(p) {
+        document.getElementById('sim-mat-qty').innerText = simMatQty;
+        document.getElementById('sim-mat-val-label').innerText = `${simMatQty}개 포장 분석 진행중`;
+        const boxRecommendationText = document.getElementById('box-guide-recommendation');
+        const threshold = parseInt(p.boxThreshold) || 2;
+        if (simMatQty <= threshold) {
+            boxRecommendationText.innerHTML = `<span class="text-amber-600 font-extrabold">[소량 오더] ${p.boxSmallName || "2P 소형박스"} 인출 사용</span>`;
+        } else {
+            boxRecommendationText.innerHTML = `<span class="text-brand-600 font-extrabold">[대량 오더] ${p.boxLargeName || "6P 표준박스"} 인출 사용</span>`;
+        }
+        renderTpuVisualLayout(p);
+    }
+
+    function renderTpuVisualLayout(p) {
+        document.getElementById('packing-box-indicator').innerText = "BOX A";
+        document.getElementById('visual-layout-grid-b').classList.add('hidden');
+        const gridContainer = document.getElementById('visual-layout-grid');
+        gridContainer.innerHTML = "";
+        let cols = "grid-cols-2";
+        if (simMatQty <= 2) cols = "grid-cols-1";
+        else if (simMatQty > 4 && simMatQty <= 9) cols = "grid-cols-3";
+        else if (simMatQty > 9) cols = "grid-cols-4";
+        gridContainer.className = `grid ${cols} gap-2`;
+        for (let i = 1; i <= simMatQty; i++) {
+            gridContainer.insertAdjacentHTML('beforeend', `
+                <div class="bg-brand-50 border-2 border-brand-200 text-[10px] font-extrabold p-3 rounded-xl flex flex-col items-center justify-center gap-1.5 hover:bg-white transition-all shadow-sm">
+                    <i class="fa-solid fa-layer-group text-xs text-brand-500"></i>
+                    <span>적재 매트 ${i}번</span>
+                </div>
+            `);
+        }
+        if (p.accessories && p.accessories.length > 0) {
+            gridContainer.insertAdjacentHTML('beforeend', `<div class="col-span-full border-t border-dashed border-brand-200 my-2 pt-2 text-[9px] font-bold text-brand-600 uppercase">📎 동반 합포 부자재 검수 수량</div>`);
+            const scale = Math.ceil(simMatQty / (p.defaultQty || 6));
+            p.accessories.forEach(acc => {
+                const totalAccQty = parseInt(acc.qty) * scale;
+                gridContainer.insertAdjacentHTML('beforeend', `
+                    <div class="col-span-full bg-brand-100 border border-brand-200 text-[10px] p-2.5 rounded-xl flex items-center justify-between font-bold">
+                        <span class="text-brand-800"><i class="fa-solid fa-screwdriver-wrench text-brand-400 mr-1.5"></i> ${acc.name}</span>
+                        <span class="text-brand-950 font-black">${totalAccQty} EA</span>
+                    </div>
+                `);
             });
+        }
+    }
 
-            saveCategoryData();
-            showToast(`✅ ${currentSelectedProducts.size}개 제품이 카테고리에 할당되었습니다.`, "success");
+    // =============================================
+    // 베이비룸 시뮬레이션
+    // =============================================
+    function updateBabyroomSimulation(p) {
+        const activeSize = p.babyroomSize || "10P";
+        const warningEl = document.getElementById('babyroom-box-split-warning');
+        const splitTitle = document.getElementById('babyroom-box-split-title');
+        const splitDesc = document.getElementById('babyroom-box-split-desc');
+        const buttonsContainer = document.getElementById('babyroom-size-buttons-container');
+        buttonsContainer.innerHTML = `
+            <button class="text-xs font-black py-2.5 px-6 rounded-lg text-white bg-brand-500 shadow-md w-full max-w-xs text-center cursor-default" disabled>
+                ${activeSize} 세트 구성 가이드
+            </button>`;
+        if (activeSize === "16P") {
+            warningEl.classList.remove('hidden');
+            splitTitle.innerText = "🚨 16P 가드 분할 패킹 지침";
+            splitDesc.innerText = "8P 박스 2개(Box A: 8P, Box B: 8P)로 철저히 나누어 패킹하세요.";
+            document.getElementById('packing-box-indicator').innerText = "8P BOX A + 8P BOX B";
+        } else if (activeSize === "18P") {
+            warningEl.classList.remove('hidden');
+            splitTitle.innerText = "🚨 18P 가드 분할 패킹 지침";
+            splitDesc.innerText = "10P 박스 1개(Box A) + 8P 박스 1개(Box B)로 나누어 패킹하세요.";
+            document.getElementById('packing-box-indicator').innerText = "10P BOX A + 8P BOX B";
+        } else if (activeSize === "20P") {
+            warningEl.classList.remove('hidden');
+            splitTitle.innerText = "🚨 20P 가드 분할 패킹 지침";
+            splitDesc.innerText = "10P 박스 2개(Box A: 10P, Box B: 10P)로 완전히 나누어 패킹하세요.";
+            document.getElementById('packing-box-indicator').innerText = "10P BOX A + 10P BOX B";
+        } else {
+            warningEl.classList.add('hidden');
+            document.getElementById('packing-box-indicator').innerText = p.boxRecommended || "단일 완박스 포장";
         }
 
-        function saveCategoryAssignments() {
-            saveCategoryData();
-            renderLobbyProducts();
-            toggleCategoryEditMode();
-            showToast("💾 카테고리 설정이 저장되었습니다.", "success");
-        }
-
-        // ===== 제품 상세 페이지 =====
-        function openProductManual(id) {
-            currentActiveProductId = id;
-            const product = productsDb.find(p => p.id === id);
-            if (!product) return;
-
-            currentTextColor = product.warningColor || '#000000';
-
-            // UI 업데이트
-            document.getElementById('detail-product-name').innerText = product.name;
-            document.getElementById('detail-product-zone').innerText = product.zone || '미지정';
-            document.getElementById('detail-product-code').innerText = product.code;
-            document.getElementById('detail-product-warning').innerText = product.warning;
-            document.getElementById('detail-product-warning').style.color = currentTextColor;
-
-            if (product.type === 'tpu') {
-                document.getElementById('simulator-tpu-mat').classList.remove('hidden');
-                document.getElementById('simulator-babyroom').classList.add('hidden');
-                
-                document.getElementById('order-qty-display').innerText = product.defaultQty;
-                document.getElementById('detail-max-limit-badge').innerText = `최대 ${product.maxQty}개 한도`;
-                document.getElementById('detail-box-small-info').innerText = product.boxSmallName;
-                document.getElementById('detail-box-large-info').innerText = product.boxLargeName;
-
-                let accessoriesHtml = '<p class="text-[9px] font-black text-brand-700 mb-2">📦 부자재 필수 목록:</p>';
-                product.accessories.forEach(acc => {
-                    accessoriesHtml += `
-                        <div class="flex justify-between items-center p-2 bg-white rounded border border-brand-100 text-[10px]">
-                            <span class="font-semibold text-brand-900">${acc.name}</span>
-                            <span class="font-black text-brand-700 bg-brand-100 px-2 py-0.5 rounded">${acc.qty}개</span>
-                        </div>
-                    `;
-                });
-                document.getElementById('detail-accessories-list').innerHTML = accessoriesHtml;
-            } else {
-                document.getElementById('simulator-tpu-mat').classList.add('hidden');
-                document.getElementById('simulator-babyroom').classList.remove('hidden');
-                
-                document.getElementById('detail-babyroom-box').innerText = product.boxRecommended;
-
-                let componentsHtml = '';
-                product.components.forEach(comp => {
-                    componentsHtml += `
-                        <div class="flex justify-between items-center p-2 bg-white rounded border border-brand-100 text-[10px]">
-                            <span class="font-semibold text-brand-900">${comp.name}</span>
-                            <span class="font-black text-brand-700 bg-brand-100 px-2 py-0.5 rounded">${comp.qty}개</span>
-                        </div>
-                    `;
-                });
-                document.getElementById('detail-babyroom-components').innerHTML = componentsHtml;
-            }
-
-            updateAdminQrPanel(id);
-            
-            document.getElementById('view-lobby').classList.add('hidden');
-            document.getElementById('view-detail').classList.remove('hidden');
-        }
-
-        // ===== 텍스트 색상 관리 =====
-        function toggleTextColorPicker() {
-            const picker = document.getElementById('text-color-picker');
-            picker.classList.toggle('hidden');
-        }
-
-        function applyTextColor(color, buttonElement) {
-            currentTextColor = color;
-            const warningText = document.getElementById('detail-product-warning');
-            warningText.style.color = color;
-
-            // 현재 활성 버튼 표시
-            document.querySelectorAll('.color-picker-btn').forEach(btn => {
-                btn.classList.remove('active');
+        // ★ 색상 적용하여 구성품 렌더링
+        const listContainer = document.getElementById('babyroom-components-list');
+        listContainer.innerHTML = "";
+        if (!p.components || p.components.length === 0) {
+            listContainer.innerHTML = `<div class="text-center text-brand-500 py-2">등록된 구성품이 없습니다.</div>`;
+        } else {
+            p.components.forEach(comp => {
+                const color = comp.color || COLOR_PALETTE[0];
+                const styleStr = color.bg
+                    ? `color:${color.text}; background:${color.bg}; padding:1px 6px; border-radius:5px;`
+                    : `color:${color.text};`;
+                listContainer.insertAdjacentHTML('beforeend', `
+                    <div class="flex items-center justify-between border-b border-brand-100/60 pb-1.5">
+                        <span class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-square-poll-vertical text-[10px] text-brand-400"></i>
+                            <span style="${styleStr}" class="font-extrabold text-xs">${comp.name}</span>
+                        </span>
+                        <span class="font-extrabold bg-brand-100 px-3 py-0.5 rounded-md text-brand-900">${comp.qty} EA</span>
+                    </div>
+                `);
             });
-            buttonElement.classList.add('active');
+        }
+        renderBabyroomVisualLayout(p);
+    }
 
-            // 데이터 저장
-            const product = productsDb.find(p => p.id === currentActiveProductId);
-            if (product) {
-                product.warningColor = color;
+    function renderBabyroomVisualLayout(p) {
+        const gridContainerA = document.getElementById('visual-layout-grid');
+        const gridContainerB = document.getElementById('visual-layout-grid-b');
+        const activeSize = p.babyroomSize || "10P";
+        gridContainerA.innerHTML = "";
+        gridContainerB.innerHTML = "";
+        const components = p.components || [];
+        if (components.length === 0) return;
+        if (activeSize === "16P" || activeSize === "18P" || activeSize === "20P") {
+            gridContainerB.classList.remove('hidden');
+            gridContainerA.className = "grid grid-cols-1 gap-1.5";
+            gridContainerB.className = "grid grid-cols-1 gap-1.5";
+            let boxATitle = "📦 [Box A] 8P 박스";
+            let boxBTitle = "📦 [Box B] 8P 박스";
+            if (activeSize === "18P") { boxATitle = "📦 [Box A] 10P 박스"; boxBTitle = "📦 [Box B] 8P 박스"; }
+            else if (activeSize === "20P") { boxATitle = "📦 [Box A] 10P 박스"; boxBTitle = "📦 [Box B] 10P 박스"; }
+            gridContainerA.insertAdjacentHTML('beforeend', `<div class="text-[9px] font-extrabold text-amber-800 uppercase border-b border-brand-100 pb-1">${boxATitle} 포장 구성</div>`);
+            gridContainerB.insertAdjacentHTML('beforeend', `<div class="text-[9px] font-extrabold text-amber-800 uppercase border-b border-brand-100 pb-1">${boxBTitle} 포장 구성</div>`);
+            components.forEach(comp => {
+                const halfA = Math.ceil(comp.qty / 2);
+                const halfB = Math.floor(comp.qty / 2);
+                const color = comp.color || COLOR_PALETTE[0];
+                const styleStr = color.bg ? `color:${color.text}; background:${color.bg}; padding:1px 5px; border-radius:4px;` : `color:${color.text};`;
+                if (halfA > 0) gridContainerA.insertAdjacentHTML('beforeend', `<div class="bg-white border border-brand-200 text-[10px] p-2 rounded-lg flex items-center justify-between shadow-sm font-bold"><span style="${styleStr}">${comp.name}</span><span class="bg-brand-100 text-brand-900 px-2 py-0.5 rounded text-[9px] font-black">${halfA} EA</span></div>`);
+                if (halfB > 0) gridContainerB.insertAdjacentHTML('beforeend', `<div class="bg-white border border-brand-200 text-[10px] p-2 rounded-lg flex items-center justify-between shadow-sm font-bold"><span style="${styleStr}">${comp.name}</span><span class="bg-brand-100 text-brand-900 px-2 py-0.5 rounded text-[9px] font-black">${halfB} EA</span></div>`);
+            });
+        } else {
+            gridContainerB.classList.add('hidden');
+            gridContainerA.className = "grid grid-cols-1 gap-1.5";
+            gridContainerA.insertAdjacentHTML('beforeend', `<div class="text-[9px] font-extrabold text-brand-600 uppercase border-b border-brand-100 pb-1">📦 [단일 완박스] ${p.boxRecommended || activeSize + ' 전용 박스'} 포장 구성</div>`);
+            components.forEach(comp => {
+                const color = comp.color || COLOR_PALETTE[0];
+                const styleStr = color.bg ? `color:${color.text}; background:${color.bg}; padding:1px 5px; border-radius:4px;` : `color:${color.text};`;
+                gridContainerA.insertAdjacentHTML('beforeend', `
+                    <div class="bg-white border border-brand-200 text-[10px] p-2.5 rounded-xl flex items-center justify-between shadow-sm font-bold">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle text-[6px] text-brand-400"></i><span style="${styleStr}">${comp.name}</span></span>
+                        <span class="bg-brand-500 text-white px-2.5 py-0.5 rounded-lg text-[9px] font-black">${comp.qty} EA</span>
+                    </div>
+                `);
+            });
+        }
+    }
+
+    // =============================================
+    // CMS 모달
+    // =============================================
+    function toggleCmsFormType() {
+        const selectedType = document.getElementById('input-type').value;
+        document.getElementById('cms-tpu-group').classList.toggle('hidden', selectedType !== 'tpu-mat');
+        document.getElementById('cms-babyroom-group').classList.toggle('hidden', selectedType !== 'babyroom');
+    }
+
+    function addTpuAccessoryRow(name = "", qty = 1) {
+        tempTpuAccessories.push({ name, qty });
+        renderCmsTpuAccessories();
+    }
+
+    function removeTpuAccessoryRow(index) {
+        tempTpuAccessories.splice(index, 1);
+        renderCmsTpuAccessories();
+    }
+
+    function renderCmsTpuAccessories() {
+        const container = document.getElementById('cms-tpu-accessories-list');
+        container.innerHTML = "";
+        if (tempTpuAccessories.length === 0) {
+            container.innerHTML = `<span class="text-[9px] text-brand-500 block text-center py-1 bg-white border border-dashed rounded-lg">등록된 동반 부자재가 없습니다.</span>`;
+            return;
+        }
+        tempTpuAccessories.forEach((acc, index) => {
+            container.insertAdjacentHTML('beforeend', `
+                <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-brand-200">
+                    <input type="text" value="${acc.name}" onchange="updateTpuAccessoryData(${index}, 'name', this.value)" placeholder="예: 고정 클립" class="flex-grow bg-brand-50 border border-brand-200 px-2 py-1 rounded text-[10px] font-bold focus:outline-none">
+                    <input type="number" value="${acc.qty}" onchange="updateTpuAccessoryData(${index}, 'qty', this.value)" class="w-12 bg-brand-50 border border-brand-200 px-1 py-1 rounded text-[10px] text-center font-bold focus:outline-none">
+                    <button type="button" onclick="removeTpuAccessoryRow(${index})" class="text-rose-500 text-xs px-2 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            `);
+        });
+    }
+
+    function updateTpuAccessoryData(index, field, value) {
+        if (field === 'qty') tempTpuAccessories[index].qty = parseInt(value) || 0;
+        else tempTpuAccessories[index].name = value;
+    }
+
+    // ★ NEW: 베이비룸 구성품 행 (색상 선택 포함)
+    function addBabyroomComponentRow(name = "", qty = 1, color = null) {
+        tempBabyroomComponents.push({ name, qty, color: color || COLOR_PALETTE[0] });
+        renderCmsBabyroomComponents();
+    }
+
+    function removeBabyroomComponentRow(index) {
+        tempBabyroomComponents.splice(index, 1);
+        renderCmsBabyroomComponents();
+    }
+
+    function renderCmsBabyroomComponents() {
+        const container = document.getElementById('cms-babyroom-components-list');
+        container.innerHTML = "";
+        if (tempBabyroomComponents.length === 0) {
+            container.innerHTML = `<span class="text-[9px] text-brand-500 block text-center py-1 bg-white border border-dashed rounded-lg">등록된 구성품/부자재가 없습니다.</span>`;
+            return;
+        }
+        tempBabyroomComponents.forEach((comp, index) => {
+            const currentColorIndex = COLOR_PALETTE.findIndex(c => c.text === (comp.color && comp.color.text));
+            const safeColorIdx = currentColorIndex >= 0 ? currentColorIndex : 0;
+
+            const swatches = COLOR_PALETTE.map((c, ci) => `
+                <div class="color-swatch ${ci === safeColorIdx ? 'selected' : ''}"
+                     style="background:${c.bg || '#e2e8f0'}; border-color:${c.text};"
+                     title="${c.label}"
+                     onclick="setBabyroomComponentColor(${index}, ${ci})"
+                ></div>
+            `).join('');
+
+            container.insertAdjacentHTML('beforeend', `
+                <div class="bg-white p-2 rounded-xl border border-brand-200 space-y-1.5">
+                    <div class="flex items-center gap-1.5">
+                        <input type="text" value="${comp.name}" onchange="updateBabyroomComponentData(${index}, 'name', this.value)" placeholder="예: 750 가드" class="flex-grow bg-brand-50 border border-brand-200 px-2 py-1 rounded text-[10px] font-bold focus:outline-none">
+                        <input type="number" value="${comp.qty}" onchange="updateBabyroomComponentData(${index}, 'qty', this.value)" class="w-12 bg-brand-50 border border-brand-200 px-1 py-1 rounded text-[10px] text-center font-bold focus:outline-none">
+                        <button type="button" onclick="removeBabyroomComponentRow(${index})" class="text-rose-500 text-xs px-2 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                    <!-- ★ 색상 선택 스왓치 -->
+                    <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
+                        <span class="text-[8px] text-brand-500 font-bold">색상:</span>
+                        ${swatches}
+                        <span class="text-[9px] font-bold px-2 py-0.5 rounded ml-1" style="color:${COLOR_PALETTE[safeColorIdx].text}; background:${COLOR_PALETTE[safeColorIdx].bg || '#f1f5f9'};">${comp.name || '미리보기'}</span>
+                    </div>
+                </div>
+            `);
+        });
+    }
+
+    function setBabyroomComponentColor(compIndex, colorIndex) {
+        tempBabyroomComponents[compIndex].color = COLOR_PALETTE[colorIndex];
+        renderCmsBabyroomComponents();
+    }
+
+    function updateBabyroomComponentData(index, field, value) {
+        if (field === 'qty') tempBabyroomComponents[index].qty = parseInt(value) || 0;
+        else tempBabyroomComponents[index].name = value;
+        // 미리보기 텍스트 갱신
+        const container = document.getElementById('cms-babyroom-components-list');
+        const rows = container.querySelectorAll(':scope > div');
+        if (rows[index]) {
+            const preview = rows[index].querySelector('span[style*="font-bold"]');
+            if (preview) preview.innerText = tempBabyroomComponents[index].name || '미리보기';
+        }
+    }
+
+    function openAdminEditorModal(isEditMode = false) {
+        const modal = document.getElementById('admin-editor-modal');
+        modal.classList.remove('hidden');
+        tempTpuAccessories = [];
+        tempBabyroomComponents = [];
+
+        if (isEditMode) {
+            const p = productsDb.find(prod => prod.id === currentActiveProductId);
+            document.getElementById('modal-title-text').innerText = "꿈비 제품 매뉴얼 수정";
+            document.getElementById('edit-original-id').value = p.id;
+            document.getElementById('input-type').value = p.type || "tpu-mat";
+            document.getElementById('input-code').value = p.code;
+            document.getElementById('input-name').value = p.name;
+            document.getElementById('input-zone').value = p.zone;
+            document.getElementById('input-warning').value = p.warning;
+            if (p.type === "babyroom") {
+                document.getElementById('input-babyroom-size').value = p.babyroomSize || "10P";
+                document.getElementById('input-babyroom-box-name').value = p.boxRecommended || "";
+                if (p.components) tempBabyroomComponents = JSON.parse(JSON.stringify(p.components));
+            } else {
+                document.getElementById('input-default-qty').value = p.defaultQty;
+                document.getElementById('input-max-qty').value = p.maxQty || 12;
+                document.getElementById('input-box-threshold').value = p.boxThreshold || 2;
+                document.getElementById('input-box-small-name').value = p.boxSmallName || "2P 소형박스";
+                document.getElementById('input-box-large-name').value = p.boxLargeName || "6P 표준박스";
+                if (p.accessories) tempTpuAccessories = JSON.parse(JSON.stringify(p.accessories));
+            }
+        } else {
+            document.getElementById('modal-title-text').innerText = "신규 제품 매뉴얼 추가";
+            document.getElementById('edit-original-id').value = "";
+            document.getElementById('input-type').value = "tpu-mat";
+            document.getElementById('input-code').value = "";
+            document.getElementById('input-name').value = "";
+            document.getElementById('input-default-qty').value = "6";
+            document.getElementById('input-max-qty').value = "14";
+            document.getElementById('input-box-threshold').value = "2";
+            document.getElementById('input-box-small-name').value = "2P 소형박스";
+            document.getElementById('input-box-large-name').value = "14P 초대형박스";
+            document.getElementById('input-zone').value = "";
+            document.getElementById('input-warning').value = "";
+            tempTpuAccessories = [{ name: "전용 고정 클립", qty: 6 }];
+            tempBabyroomComponents = [
+                { name: "640 가드", qty: 2, color: COLOR_PALETTE[0] },
+                { name: "750 도어", qty: 1, color: COLOR_PALETTE[0] },
+                { name: "일자 커넥터", qty: 6, color: COLOR_PALETTE[1] },
+                { name: "코너 커넥터", qty: 4, color: COLOR_PALETTE[1] },
+            ];
+        }
+
+        toggleCmsFormType();
+        renderCmsTpuAccessories();
+        renderCmsBabyroomComponents();
+    }
+
+    function closeAdminEditorModal() {
+        document.getElementById('admin-editor-modal').classList.add('hidden');
+    }
+
+    function saveAdminProduct() {
+        const originalId = document.getElementById('edit-original-id').value;
+        const type = document.getElementById('input-type').value;
+        const code = document.getElementById('input-code').value.trim();
+        const name = document.getElementById('input-name').value.trim();
+        const zone = document.getElementById('input-zone').value.trim();
+        const warning = document.getElementById('input-warning').value.trim();
+        if (!code || !name) { showToast("❌ 코드와 제품명은 필수입니다.", "warning"); return; }
+        let productData = { id: originalId || "item-" + Date.now(), type, code, name, zone, warning };
+        if (type === "babyroom") {
+            productData.babyroomSize = document.getElementById('input-babyroom-size').value;
+            productData.boxRecommended = document.getElementById('input-babyroom-box-name').value.trim() || `${productData.babyroomSize} 전용 박스 사용`;
+            productData.components = JSON.parse(JSON.stringify(tempBabyroomComponents));
+        } else {
+            productData.defaultQty = parseInt(document.getElementById('input-default-qty').value) || 6;
+            productData.maxQty = parseInt(document.getElementById('input-max-qty').value) || 12;
+            productData.boxThreshold = parseInt(document.getElementById('input-box-threshold').value) || 2;
+            productData.boxSmallName = document.getElementById('input-box-small-name').value.trim();
+            productData.boxLargeName = document.getElementById('input-box-large-name').value.trim();
+            productData.accessories = JSON.parse(JSON.stringify(tempTpuAccessories));
+        }
+        if (originalId) {
+            const index = productsDb.findIndex(p => p.id === originalId);
+            if (index !== -1) { productsDb[index] = productData; showToast("💾 수정 완료.", "success"); }
+        } else {
+            productsDb.push(productData);
+            showToast("🎉 새 제품 등록 완료.", "success");
+        }
+        saveProductsData();
+        closeAdminEditorModal();
+        if (originalId) openProductManual(originalId);
+        else goBackToLobby();
+    }
+
+    function editCurrentProduct() { openAdminEditorModal(true); }
+
+    function deleteCurrentProduct() {
+        if (confirm("이 제품의 포장 가이드를 삭제하시겠습니까?")) {
+            const index = productsDb.findIndex(p => p.id === currentActiveProductId);
+            if (index !== -1) {
+                productsDb.splice(index, 1);
                 saveProductsData();
-                saveCategoryData();
-            }
-
-            showToast("🎨 텍스트 색상이 변경되었습니다.", "success");
-        }
-
-        function resetTextColor() {
-            currentTextColor = '#000000';
-            const warningText = document.getElementById('detail-product-warning');
-            warningText.style.color = '#000000';
-
-            document.querySelectorAll('.color-picker-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector('.color-picker-btn[style*="background-color: rgb(0, 0, 0)"], .color-picker-btn[style*="#000000"]').classList.add('active');
-
-            const product = productsDb.find(p => p.id === currentActiveProductId);
-            if (product) {
-                product.warningColor = '#000000';
-                saveProductsData();
-                saveCategoryData();
-            }
-
-            showToast("↩️ 텍스트 색상이 초기화되었습니다.", "info");
-        }
-
-        // ===== 주문 수량 관리 =====
-        function increaseOrderQty() {
-            const display = document.getElementById('order-qty-display');
-            const product = productsDb.find(p => p.id === currentActiveProductId);
-            let currentQty = parseInt(display.innerText);
-            
-            if (currentQty < product.maxQty) {
-                currentQty++;
-                display.innerText = currentQty;
-            }
-        }
-
-        function decreaseOrderQty() {
-            const display = document.getElementById('order-qty-display');
-            let currentQty = parseInt(display.innerText);
-            
-            if (currentQty > 1) {
-                currentQty--;
-                display.innerText = currentQty;
-            }
-        }
-
-        // ===== 네비게이션 =====
-        function goBackToLobby() {
-            document.getElementById('view-detail').classList.add('hidden');
-            document.getElementById('view-lobby').classList.remove('hidden');
-            renderLobbyProducts();
-        }
-
-        // ===== 검색 필터링 =====
-        function filterProducts() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const allCards = document.querySelectorAll('#product-list-container > div');
-
-            productsDb.forEach(product => {
-                const matches = product.name.toLowerCase().includes(searchTerm) || 
-                               product.code.toLowerCase().includes(searchTerm);
-                // 검색 필터링 로직 추가 가능
-            });
-        }
-
-        // ===== 제품 편집 모달 =====
-        function openAdminEditorModal(isEdit) {
-            const modal = document.getElementById('admin-editor-modal');
-            modal.classList.remove('hidden');
-
-            if (isEdit && currentActiveProductId) {
-                const product = productsDb.find(p => p.id === currentActiveProductId);
-                if (product) {
-                    document.getElementById('edit-original-id').value = product.id;
-                    document.getElementById('input-type').value = product.type;
-                    document.getElementById('input-code').value = product.code;
-                    document.getElementById('input-name').value = product.name;
-                    document.getElementById('input-zone').value = product.zone || '';
-                    document.getElementById('input-warning').value = product.warning;
-
-                    if (product.type === 'tpu') {
-                        document.getElementById('input-default-qty').value = product.defaultQty || 6;
-                        document.getElementById('input-max-qty').value = product.maxQty || 12;
-                        document.getElementById('input-box-threshold').value = product.boxThreshold || 2;
-                        document.getElementById('input-box-small-name').value = product.boxSmallName || '';
-                        document.getElementById('input-box-large-name').value = product.boxLargeName || '';
-                        tempTpuAccessories = JSON.parse(JSON.stringify(product.accessories || []));
-                    } else {
-                        document.getElementById('input-babyroom-size').value = product.babyroomSize || '';
-                        document.getElementById('input-babyroom-box-name').value = product.boxRecommended || '';
-                        tempBabyroomComponents = JSON.parse(JSON.stringify(product.components || []));
-                    }
-
-                    toggleCmsFormType();
-                    renderCmsAccessoriesEditor();
-                    renderCmsBabyroomComponentsEditor();
-                }
-            } else {
-                document.getElementById('edit-original-id').value = '';
-                document.getElementById('input-type').value = 'tpu';
-                document.getElementById('input-code').value = '';
-                document.getElementById('input-name').value = '';
-                document.getElementById('input-zone').value = '';
-                document.getElementById('input-warning').value = '';
-                document.getElementById('input-default-qty').value = '6';
-                document.getElementById('input-max-qty').value = '12';
-                document.getElementById('input-box-threshold').value = '2';
-                document.getElementById('input-box-small-name').value = '';
-                document.getElementById('input-box-large-name').value = '';
-                document.getElementById('input-babyroom-size').value = '';
-                document.getElementById('input-babyroom-box-name').value = '';
-
-                tempTpuAccessories = [];
-                tempBabyroomComponents = [];
-
-                toggleCmsFormType();
-                renderCmsAccessoriesEditor();
-                renderCmsBabyroomComponentsEditor();
-            }
-        }
-
-        function closeAdminEditorModal() {
-            document.getElementById('admin-editor-modal').classList.add('hidden');
-        }
-
-        // ===== 제품 저장 =====
-        function saveAdminProduct() {
-            const originalId = document.getElementById('edit-original-id').value;
-            const type = document.getElementById('input-type').value;
-            const code = document.getElementById('input-code').value.trim();
-            const name = document.getElementById('input-name').value.trim();
-            const zone = document.getElementById('input-zone').value.trim();
-            const warning = document.getElementById('input-warning').value.trim();
-
-            if (!code || !name) {
-                showToast("❌ 식별 코드와 제품 한글 명칭은 필수 항목입니다.", "warning");
-                return;
-            }
-
-            let productData = {
-                id: originalId || "item-" + Date.now(),
-                type: type,
-                code: code,
-                name: name,
-                zone: zone,
-                warning: warning,
-                category: 'uncategorized',
-                warningColor: '#000000'
-            };
-
-            if (type === "babyroom") {
-                productData.babyroomSize = document.getElementById('input-babyroom-size').value;
-                productData.boxRecommended = document.getElementById('input-babyroom-box-name').value.trim() || `${productData.babyroomSize} 전용 박스 사용`;
-                productData.components = JSON.parse(JSON.stringify(tempBabyroomComponents));
-            } else {
-                productData.defaultQty = parseInt(document.getElementById('input-default-qty').value) || 6;
-                productData.maxQty = parseInt(document.getElementById('input-max-qty').value) || 12;
-                productData.boxThreshold = parseInt(document.getElementById('input-box-threshold').value) || 2;
-                productData.boxSmallName = document.getElementById('input-box-small-name').value.trim();
-                productData.boxLargeName = document.getElementById('input-box-large-name').value.trim();
-                productData.accessories = JSON.parse(JSON.stringify(tempTpuAccessories));
-            }
-
-            if (originalId) {
-                const index = productsDb.findIndex(p => p.id === originalId);
-                if (index !== -1) {
-                    const existing = productsDb[index];
-                    productData.category = existing.category;
-                    productData.warningColor = existing.warningColor;
-                    productsDb[index] = productData;
-                    showToast("💾 제품 포장 규칙 지침이 성공적으로 수정되었습니다.", "success");
-                }
-            } else {
-                productsDb.push(productData);
-                showToast("🎉 새로운 매뉴얼 모델이 추가 등록되었습니다.", "success");
-            }
-
-            saveProductsData();
-            closeAdminEditorModal();
-            
-            if (originalId) {
-                openProductManual(originalId);
-            } else {
+                showToast("🗑️ 삭제 완료.", "warning");
                 goBackToLobby();
             }
         }
+    }
 
-        function editCurrentProduct() {
-            openAdminEditorModal(true);
+    // =============================================
+    // QR / 유틸
+    // =============================================
+    function toggleAdminPanel() {
+        const panel = document.getElementById('admin-panel');
+        const chevron = document.getElementById('admin-chevron');
+        panel.classList.toggle('hidden');
+        chevron.classList.toggle('rotate-180');
+    }
+
+    function updateAdminQrPanel(id) {
+        const p = productsDb.find(prod => prod.id === id);
+        if (!p) return;
+        document.getElementById('qr-target-code').innerText = p.code;
+        document.getElementById('qr-target-name').innerText = p.name;
+        const currentUrl = window.location.href.split('?')[0];
+        const directTargetUrl = `${currentUrl}?product=${p.id}`;
+        document.getElementById('qr-target-link').innerText = `${window.location.host}/?product=${p.id}`;
+        document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=223d40&data=${encodeURIComponent(directTargetUrl)}`;
+    }
+
+    function showToast(message, type = "info") {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-message').innerText = message;
+        if (type === "success") document.getElementById('toast-icon').className = "fa-solid fa-circle-check text-emerald-500 text-sm";
+        else if (type === "warning") document.getElementById('toast-icon').className = "fa-solid fa-triangle-exclamation text-rose-500 text-sm animate-pulse";
+        else document.getElementById('toast-icon').className = "fa-solid fa-circle-info text-brand-500 text-sm";
+        toast.className = "fixed bottom-6 left-1/2 -translate-x-1/2 bg-white border border-brand-200 text-brand-900 text-[11px] py-3.5 px-6 rounded-2xl shadow-2xl flex items-center gap-2.5 z-50 opacity-100 transform translate-y-0 transition-all duration-300 font-extrabold ggumbi-shadow";
+        setTimeout(() => {
+            toast.className = "fixed bottom-6 left-1/2 -translate-x-1/2 bg-white border border-brand-200 text-brand-900 text-[11px] py-3.5 px-6 rounded-2xl shadow-2xl flex items-center gap-2.5 z-50 opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2";
+        }, 3000);
+    }
+
+    window.onload = function () {
+        loadProductsData();
+        renderLobbyProducts();
+        const urlParams = new URLSearchParams(window.location.search);
+        const directProductCode = urlParams.get('product');
+        if (directProductCode) {
+            const targetProd = productsDb.find(p => p.id === directProductCode || p.code === directProductCode);
+            if (targetProd) openProductManual(targetProd.id);
+        } else {
+            updateAdminQrPanel("licoco-corner");
         }
-
-        function deleteCurrentProduct() {
-            if (confirm("정말로 이 제품의 가변 QR 및 포장 가이드를 삭제하시겠습니까?")) {
-                const index = productsDb.findIndex(p => p.id === currentActiveProductId);
-                if (index !== -1) {
-                    productsDb.splice(index, 1);
-                    saveProductsData();
-                    showToast("🗑️ 매뉴얼이 정상 삭제 처리되었습니다.", "warning");
-                    goBackToLobby();
-                }
-            }
-        }
-
-        // ===== CMS 폼 토글 =====
-        function toggleCmsFormType() {
-            const type = document.getElementById('input-type').value;
-            document.getElementById('cms-form-tpu').classList.toggle('hidden', type !== 'tpu');
-            document.getElementById('cms-form-babyroom').classList.toggle('hidden', type !== 'babyroom');
-        }
-
-        // ===== 부자재 관리 =====
-        function renderCmsAccessoriesEditor() {
-            const container = document.getElementById('cms-accessories-editor');
-            let html = '';
-
-            tempTpuAccessories.forEach((acc, index) => {
-                html += `
-                    <div class="flex gap-2">
-                        <input type="text" value="${acc.name}" onchange="tempTpuAccessories[${index}].name = this.value" 
-                            placeholder="부자재명" class="flex-1 border border-brand-200 rounded px-2 py-1 text-xs">
-                        <input type="number" value="${acc.qty}" onchange="tempTpuAccessories[${index}].qty = parseInt(this.value)" 
-                            min="1" class="w-16 border border-brand-200 rounded px-2 py-1 text-xs">
-                        <button onclick="tempTpuAccessories.splice(${index}, 1); renderCmsAccessoriesEditor()" 
-                            class="text-rose-600 hover:text-rose-800 font-bold text-sm">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function addAccessoryField() {
-            tempTpuAccessories.push({ name: '', qty: 1 });
-            renderCmsAccessoriesEditor();
-        }
-
-        // ===== 베이비룸 구성품 관리 =====
-        function renderCmsBabyroomComponentsEditor() {
-            const container = document.getElementById('cms-babyroom-components-editor');
-            let html = '';
-
-            tempBabyroomComponents.forEach((comp, index) => {
-                html += `
-                    <div class="flex gap-2">
-                        <input type="text" value="${comp.name}" onchange="tempBabyroomComponents[${index}].name = this.value" 
-                            placeholder="구성품명" class="flex-1 border border-brand-200 rounded px-2 py-1 text-xs">
-                        <input type="number" value="${comp.qty}" onchange="tempBabyroomComponents[${index}].qty = parseInt(this.value)" 
-                            min="1" class="w-16 border border-brand-200 rounded px-2 py-1 text-xs">
-                        <button onclick="tempBabyroomComponents.splice(${index}, 1); renderCmsBabyroomComponentsEditor()" 
-                            class="text-rose-600 hover:text-rose-800 font-bold text-sm">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function addBabyroomComponentField() {
-            tempBabyroomComponents.push({ name: '', qty: 1 });
-            renderCmsBabyroomComponentsEditor();
-        }
-
-        // ===== Admin 패널 =====
-        function toggleAdminPanel() {
-            const panel = document.getElementById('admin-panel');
-            const chevron = document.getElementById('admin-chevron');
-            panel.classList.toggle('hidden');
-            chevron.classList.toggle('rotate-180');
-        }
-
-        function updateAdminQrPanel(id) {
-            const p = productsDb.find(prod => prod.id === id);
-            if (!p) return;
-
-            document.getElementById('qr-target-code').innerText = p.code;
-            document.getElementById('qr-target-name').innerText = p.name;
-
-            const currentUrl = window.location.href.split('?')[0];
-            const directTargetUrl = `${currentUrl}?product=${p.id}`;
-
-            document.getElementById('qr-target-link').innerText = `${window.location.host}/?product=${p.id}`;
-            const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&color=223d40&data=${encodeURIComponent(directTargetUrl)}`;
-            document.getElementById('qr-image').src = qrImgUrl;
-        }
-
-        function downloadQrImage() {
-            const link = document.createElement('a');
-            link.href = document.getElementById('qr-image').src;
-            link.download = 'qr-code.png';
-            link.click();
-        }
-
-        // ===== 다운로드 =====
-        function downloadUpdatedHtml() {
-            const htmlContent = document.documentElement.outerHTML;
-            const blob = new Blob([htmlContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'index.html';
-            link.click();
-            URL.revokeObjectURL(url);
-            showToast("💾 파일 다운로드가 시작되었습니다.", "success");
-        }
-
-        // ===== 알림 토스트 =====
-        function showToast(message, type = "info") {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-message');
-            const toastIcon = document.getElementById('toast-icon');
-
-            toastMsg.innerText = message;
-
-            if (type === "success") {
-                toastIcon.className = "fa-solid fa-circle-check text-emerald-500 text-sm";
-            } else if (type === "warning") {
-                toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-500 text-sm animate-pulse";
-            } else {
-                toastIcon.className = "fa-solid fa-circle-info text-brand-500 text-sm";
-            }
-
-            toast.className = "fixed bottom-6 left-1/2 -translate-x-1/2 bg-white border border-brand-200 text-brand-900 text-[11px] py-3.5 px-6 rounded-2xl shadow-2xl flex items-center gap-2.5 z-50 opacity-100 transform translate-y-0 transition-all duration-300 font-extrabold ggumbi-shadow";
-
-            setTimeout(() => {
-                toast.className = "fixed bottom-6 left-1/2 -translate-x-1/2 bg-white border border-brand-200 text-brand-900 text-[11px] py-3.5 px-6 rounded-2xl shadow-2xl flex items-center gap-2.5 z-50 opacity-0 pointer-events-none transition-all duration-300 transform translate-y-2";
-            }, 3000);
-        }
-
-        // ===== 초기화 =====
-        window.onload = function() {
-            loadProductsData();
-            loadCategoryData();
-            renderLobbyProducts();
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const directProductCode = urlParams.get('product');
-
-            if (directProductCode) {
-                const targetProd = productsDb.find(p => p.id === directProductCode || p.code === directProductCode);
-                if (targetProd) {
-                    openProductManual(targetProd.id);
-                }
-            } else {
-                updateAdminQrPanel("licoco-corner");
-            }
-        };
-    </script>
+    };
+</script>
 </body>
 </html>
+HTMLEOF
+echo "Done. Size: $(wc -c < /mnt/user-data/outputs/index.html) bytes"
+출력
